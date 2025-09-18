@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appointment Form (Pages 1-6)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Information Needed for Booking Appointments</h1>
+
+  <form id="multiForm">
+
+    <!-- PAGE 1 -->
+    <div class="form-page" id="page1">
+      <h2>Page 1 - Personal Info</h2>
+      <label>Full Name:</label>
+      <input type="text" id="fullname" required>
+
+      <label>Date of Birth:</label>
+      <input type="date" id="dob" required>
+
+      <label>Phone Number:</label>
+      <input type="tel" id="phone" required>
+
+      <button type="button" onclick="next(2)">Next →</button>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="form-page hidden" id="page2">
+      <h2>Page 2 - Contact Info</h2>
+      <label>Email Address:</label>
+      <input type="email" id="email" required>
+
+      <label>Address:</label>
+      <textarea id="address"></textarea>
+
+      <button type="button" onclick="prev(1)">← Back</button>
+      <button type="button" onclick="next(3)">Next →</button>
+    </div>
+
+    <!-- PAGE 3 -->
+    <div class="form-page hidden" id="page3">
+      <h2>Page 3 - Appointment Preferences</h2>
+      <label>Preferred Date:</label>
+      <input type="date" id="appt_date" required>
+
+      <label>Preferred Time:</label>
+      <select id="appt_time" required>
+        <option value="">--Select--</option>
+        <option>Morning</option>
+        <option>Afternoon</option>
+        <option>Evening</option>
+      </select>
+
+      <button type="button" onclick="prev(2)">← Back</button>
+      <button type="button" onclick="next(4)">Next →</button>
+    </div>
+
+    <!-- PAGE 4 -->
+    <div class="form-page hidden" id="page4">
+      <h2>Page 4 - Additional Info</h2>
+      <label>Reason for Appointment:</label>
+      <textarea id="reason"></textarea>
+
+      <label>Special Requirements:</label>
+      <textarea id="requirements"></textarea>
+
+      <button type="button" onclick="prev(3)">← Back</button>
+      <button type="button" onclick="next(5)">Next →</button>
+    </div>
+
+    <!-- PAGE 5 -->
+    <div class="form-page hidden" id="page5">
+      <h2>Page 5 - Emergency Contact</h2>
+      <label>Emergency Contact Name:</label>
+      <input type="text" id="emergency_name">
+
+      <label>Emergency Contact Phone:</label>
+      <input type="tel" id="emergency_phone">
+
+      <button type="button" onclick="prev(4)">← Back</button>
+      <button type="button" onclick="next(6)">Next →</button>
+    </div>
+
+    <!-- PAGE 6 -->
+    <div class="form-page hidden" id="page6">
+      <h2>Page 6 - Review</h2>
+      <p>Click "Finish" to generate the Yellow Sheet.</p>
+
+      <button type="button" onclick="prev(5)">← Back</button>
+      <button type="button" onclick="finish()">Finish →</button>
+    </div>
+
+  </form>
+
+  <script src="script.js"></script>
+</body>
+</html>
