@@ -1,169 +1,107 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>One World One Centre — Intake Wizard & Yellow Form</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-  <style>
-    .field-gap{gap:12px}
-    .disabled-input{background:#f3f4f6;color:#6b7280}
-    .yellow-bg{background:#FFF9C4}
-    .checkbox-box{display:inline-block;width:18px;height:18px;border:1px solid #111;text-align:center;line-height:16px;font-size:14px;font-weight:700;margin-right:4px}
-    .muted{color:#6b7280}
-    .final-sheet{max-width:800px;margin:auto}
-    @media print{
-      body{margin:0}
-      .wizard{display:none}
-      .final-wrap{display:block}
-    }
-  </style>
-</head>
-<body class="bg-gray-100 text-gray-800">
-  <div class="max-w-5xl mx-auto p-6">
+<script>
+function generateFinal() {
+  const final = document.getElementById('finalArea');
 
-    <!-- wizard (unchanged) -->
-    <div id="wizardRoot" class="wizard bg-white rounded-lg shadow p-6">
-      <!-- your wizard steps code (unchanged)... -->
+  final.innerHTML = `
+    <div class="text-center mb-3 font-bold text-lg">
+      INFORMATION NEEDED FOR BOOKING APPOINTMENTS
+    </div>
+    <table class="w-full border border-black text-xs yellow-bg">
+      <tr>
+        <td class="border p-1 w-28">DATE</td>
+        <td class="border p-1">${document.getElementById('date').value}</td>
+        <td class="border p-1 w-32">TAKEN BY</td>
+        <td class="border p-1">${document.getElementById('takenBy').value}</td>
+      </tr>
+      <tr>
+        <td class="border p-1">CONTACT NAME</td>
+        <td class="border p-1">${document.getElementById('contactName').value}</td>
+        <td class="border p-1">CONTACT PHONE #</td>
+        <td class="border p-1">${document.getElementById('contactPhone').value}</td>
+      </tr>
+      <tr>
+        <td class="border p-1">CONTACT RELATIONSHIP</td>
+        <td class="border p-1">${document.getElementById('contactRel').value}</td>
+        <td class="border p-1">DATE STUDENT(S) LANDED IN CANADA</td>
+        <td class="border p-1">${document.getElementById('landed').value}</td>
+      </tr>
+    </table>
+
+    <table class="w-full border border-black text-xs yellow-bg mt-2">
+      <tr>
+        <td class="border p-1 w-32">STUDENT'S STATUS</td>
+        <td class="border p-1">${document.querySelector("input[name='studentStatus']:checked")?.value || ''}</td>
+        <td class="border p-1 w-48">IMMIGRATION DOCUMENT (OF NATURAL PARENT/GUARDIAN)</td>
+        <td class="border p-1">${document.querySelector("input[name='immDoc']:checked")?.value || ''}</td>
+        <td class="border p-1 w-32">EXPIRY DATE</td>
+        <td class="border p-1">${document.getElementById('expiry').value}</td>
+      </tr>
+      <tr>
+        <td class="border p-1">PREVIOUS ATTENDANCE IN CANADIAN SCHOOLS?</td>
+        <td class="border p-1" colspan="5">${document.querySelector("input[name='prevAttend']:checked")?.value || ''} ${document.getElementById('prevDetails')?.value || ''}</td>
+      </tr>
+    </table>
+
+    <table class="w-full border border-black text-xs yellow-bg mt-2">
+      <tr>
+        <td class="border p-1 w-32">FATHER'S SURNAME</td>
+        <td class="border p-1">${document.getElementById('fatherSurname').value}</td>
+        <td class="border p-1 w-32">FATHER'S GIVEN NAME</td>
+        <td class="border p-1">${document.getElementById('fatherGiven').value}</td>
+      </tr>
+      <tr>
+        <td class="border p-1">MOTHER'S SURNAME</td>
+        <td class="border p-1">${document.getElementById('motherSurname').value}</td>
+        <td class="border p-1">MOTHER'S GIVEN NAME</td>
+        <td class="border p-1">${document.getElementById('motherGiven').value}</td>
+      </tr>
+    </table>
+
+    <table class="w-full border border-black text-xs yellow-bg mt-2">
+      <tr>
+        <td class="border p-1 w-24">APARTMENT #</td>
+        <td class="border p-1">${document.getElementById('apt').value}</td>
+        <td class="border p-1 w-32">FAMILY ADDRESS</td>
+        <td class="border p-1">${document.getElementById('address').value}</td>
+        <td class="border p-1 w-24">POSTAL CODE</td>
+        <td class="border p-1">${document.getElementById('postal').value}</td>
+      </tr>
+      <tr>
+        <td class="border p-1">FAMILY PHONE #</td>
+        <td class="border p-1">${document.getElementById('familyPhone').value}</td>
+        <td class="border p-1">HOME LANGUAGE</td>
+        <td class="border p-1">${document.getElementById('homeLang').value}</td>
+        <td class="border p-1">CATHOLIC</td>
+        <td class="border p-1">${document.querySelector("input[name='catholic']:checked")?.value || ''}</td>
+      </tr>
+    </table>
+
+    <div class="mt-2 text-xs yellow-bg border border-black">
+      ${Array.from({length: studentCount}, (_, i) => {
+        const idx = i + 1;
+        return `
+          <div class="grid grid-cols-12 border-b border-black">
+            <div class="col-span-2 border-r p-1">${document.getElementById("s_"+idx+"_surname")?.value || ''}</div>
+            <div class="col-span-2 border-r p-1">${document.getElementById("s_"+idx+"_given")?.value || ''}</div>
+            <div class="col-span-1 border-r p-1">${document.querySelector("input[name='s_"+idx+"_gender']:checked")?.value || ''}</div>
+            <div class="col-span-2 border-r p-1">${document.getElementById("s_"+idx+"_dob")?.value || ''}</div>
+            <div class="col-span-2 border-r p-1">${document.getElementById("s_"+idx+"_birth")?.value || ''}</div>
+            <div class="col-span-3 p-1">Last Grade/School Year/Program (to be filled)</div>
+          </div>
+        `;
+      }).join("")}
     </div>
 
-    <!-- FINAL STATIC YELLOW FORM -->
-    <div id="finalWrap" class="final-wrap hidden mt-6">
-      <div id="finalArea" class="yellow-bg p-6 rounded shadow border final-sheet text-sm leading-5">
-        <!-- Yellow form content injected here -->
-      </div>
-
-      <div class="mt-4 flex gap-3 justify-center">
-        <button id="printBtn" class="px-4 py-2 bg-blue-600 text-white rounded" onclick="window.print()">Print</button>
-        <button id="pdfBtn" class="px-4 py-2 bg-indigo-600 text-white rounded">Download PDF</button>
-        <button id="editBtn" class="px-4 py-2 bg-gray-500 text-white rounded">Back to Edit</button>
-      </div>
+    <div class="mt-2 border border-black p-2 yellow-bg text-xs">
+      <strong>POTENTIAL LIMITED FORMAL SCHOOLING PROFILE:</strong><br>
+      ${document.querySelector("input[name='limitedSchooling']:checked")?.value || ''}<br>
+      Notes: ${document.getElementById('notes').value}
     </div>
 
-  </div>
+    <div class="mt-2 text-xs muted">Rev. 2021</div>
+  `;
 
-  <script>
-    // --- Wizard nav / inputs handling code stays same as before ---
-    function goTo(step){
-      document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'))
-      const target = document.querySelector(`.page[data-step='${step}']`)
-      if(target) target.classList.remove('hidden')
-      window.scrollTo({top:0,behavior:'smooth'})
-    }
-    function toggleOtherField(id, el){
-      const inp = document.getElementById(id)
-      if(el.value === 'Other' && el.checked){ inp.classList.remove('hidden'); inp.focus() } else { inp.classList.add('hidden'); inp.value = '' }
-    }
-    function toggleAttendance(isYes){
-      const d = document.getElementById('prevDetails')
-      if(isYes){ d.disabled = false; d.classList.remove('disabled-input') } else { d.disabled = true; d.classList.add('disabled-input'); d.value = '' }
-    }
-
-    let studentCount = 0
-    function addStudent(prefill){
-      studentCount++
-      const id = studentCount
-      const container = document.getElementById('studentsContainer')
-      const wrap = document.createElement('div')
-      wrap.className = 'p-4 border rounded bg-gray-50'
-      wrap.id = `student-${id}`
-      wrap.innerHTML = `
-        <div class="grid grid-cols-12 gap-3">
-          <div class="col-span-3">
-            <label class="text-sm">STUDENT'S SURNAME</label>
-            <input type="text" id="s_${id}_surname" class="w-full border rounded p-2 mt-1" value="${prefill?.surname||''}" />
-          </div>
-          <div class="col-span-3">
-            <label class="text-sm">STUDENT'S GIVEN NAME</label>
-            <input type="text" id="s_${id}_given" class="w-full border rounded p-2 mt-1" value="${prefill?.given||''}" />
-          </div>
-          <div class="col-span-2">
-            <label class="text-sm">GENDER</label>
-            <div class="mt-1 flex items-center gap-3">
-              <label class="inline-flex items-center"><input type="radio" name="s_${id}_gender" value="F">F</label>
-              <label class="inline-flex items-center"><input type="radio" name="s_${id}_gender" value="M">M</label>
-            </div>
-          </div>
-          <div class="col-span-2">
-            <label class="text-sm">DOB</label>
-            <input type="date" id="s_${id}_dob" class="w-full border rounded p-2 mt-1" />
-          </div>
-          <div class="col-span-2">
-            <label class="text-sm">BIRTH COUNTRY</label>
-            <input type="text" id="s_${id}_birth" class="w-full border rounded p-2 mt-1" />
-          </div>
-        </div>
-      `
-      container.appendChild(wrap)
-    }
-    function removeStudent(){ if(studentCount===0) return; const el=document.getElementById(`student-${studentCount}`); if(el) el.remove(); studentCount-- }
-    addStudent()
-
-    // Helpers
-    function checkboxMark(cond){ return cond ? '☑' : '☐' }
-    function getRadioValue(name){ const r=document.querySelector(`input[name='${name}']:checked`); return r? r.value : '' }
-
-    // --- Build final yellow sheet in same look as photo ---
-    function generateFinal(){
-      const final = document.getElementById('finalArea')
-      final.innerHTML = `
-        <div class="text-center mb-3 font-bold">INFORMATION NEEDED FOR BOOKING APPOINTMENTS</div>
-        <table class="w-full border border-black text-xs">
-          <tr><td class="border p-1 w-32">DATE</td><td class="border p-1">${document.getElementById('date').value}</td>
-              <td class="border p-1 w-32">TAKEN BY</td><td class="border p-1">${document.getElementById('takenBy').value}</td></tr>
-          <tr><td class="border p-1">CONTACT NAME</td><td class="border p-1">${document.getElementById('contactName').value}</td>
-              <td class="border p-1">PHONE #</td><td class="border p-1">${document.getElementById('contactPhone').value}</td></tr>
-          <tr><td class="border p-1">RELATION</td><td class="border p-1">${document.getElementById('contactRel').value}</td>
-              <td class="border p-1"></td><td class="border p-1"></td></tr>
-        </table>
-        <div class="mt-2">
-          <div class="font-semibold">IMMIGRATION & ATTENDANCE</div>
-          <div>Student Status: ${getRadioValue('studentStatus')} | Document: ${getRadioValue('immDoc')}</div>
-          <div>Expiry: ${document.getElementById('expiry').value} | Previous Attend: ${getRadioValue('prevAttend')}</div>
-          <div>Landed: ${document.getElementById('landed').value}</div>
-        </div>
-        <div class="mt-2">
-          <div class="font-semibold">PARENTS</div>
-          <div>Father: ${document.getElementById('fatherSurname').value} ${document.getElementById('fatherGiven').value}</div>
-          <div>Mother: ${document.getElementById('motherSurname').value} ${document.getElementById('motherGiven').value}</div>
-        </div>
-        <div class="mt-2">
-          <div class="font-semibold">ADDRESS</div>
-          <div>${document.getElementById('apt').value} ${document.getElementById('address').value} ${document.getElementById('postal').value}</div>
-          <div>Phone: ${document.getElementById('familyPhone').value} | Language: ${document.getElementById('homeLang').value}</div>
-        </div>
-        <div class="mt-2">
-          <div class="font-semibold">STUDENTS</div>
-          ${[...Array(studentCount)].map((_,i)=>{
-            const idx=i+1
-            const sname=document.getElementById('s_'+idx+'_surname')?.value||''
-            const gname=document.getElementById('s_'+idx+'_given')?.value||''
-            const dob=document.getElementById('s_'+idx+'_dob')?.value||''
-            const birth=document.getElementById('s_'+idx+'_birth')?.value||''
-            return `<div class="border p-1 mt-1">${sname}, ${gname} — DOB: ${dob} — Birth: ${birth}</div>`
-          }).join('')}
-        </div>
-        <div class="mt-2">
-          <div class="font-semibold">NOTES</div>
-          ${document.getElementById('notes').value}
-        </div>
-      `
-
-      document.getElementById('wizardRoot').classList.add('hidden')
-      document.getElementById('finalWrap').classList.remove('hidden')
-
-      document.getElementById('pdfBtn').onclick = ()=>{
-        const opt = { margin:0.2, filename:'yellow-form.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in',format:'letter',orientation:'portrait'} }
-        html2pdf().set(opt).from(document.getElementById('finalArea')).save()
-      }
-      document.getElementById('editBtn').onclick = ()=>{
-        document.getElementById('wizardRoot').classList.remove('hidden')
-        document.getElementById('finalWrap').classList.add('hidden')
-        window.scrollTo({top:0,behavior:'smooth'})
-      }
-    }
-    window.generateFinal = generateFinal
-  </script>
-</body>
-</html>
+  document.getElementById('wizardRoot').classList.add('hidden');
+  document.getElementById('finalWrap').classList.remove('hidden');
+}
+</script>
