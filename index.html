@@ -3,243 +3,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Information Needed for Booking Appointments</title>
+  <title>Student Intake Wizard</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background: #f9f9f9;
-    }
-    .form-container {
-      background: #fff;
-      padding: 20px;
-      border: 1px solid #333;
-      max-width: 1000px;
-      margin: auto;
-    }
-    h2 {
-      text-align: center;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 15px;
-      font-size: 14px;
-    }
-    td, th {
-      border: 1px solid #333;
-      padding: 6px;
-      vertical-align: top;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-    input[type="text"], input[type="date"], input[type="tel"], select {
-      width: 100%;
-      padding: 4px;
-      font-size: 14px;
-    }
-    .checkbox-group, .radio-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .notes {
-      border: 1px solid #333;
-      padding: 10px;
-      min-height: 60px;
-    }
-    .footer {
-      margin-top: 10px;
-      font-size: 12px;
-      text-align: left;
-    }
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+    .wizard-step { display: none; }
+    .wizard-step.active { display: block; }
+    .form-container { background: #fff; padding: 20px; border: 1px solid #333; max-width: 1000px; margin: auto; }
+    h2 { text-align: center; text-transform: uppercase; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; }
+    td, th { border: 1px solid #333; padding: 6px; vertical-align: top; }
+    label { display: block; font-weight: bold; margin-bottom: 4px; }
+    input, select { padding: 4px; font-size: 14px; width: 100%; box-sizing: border-box; }
+    .radio-group, .checkbox-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .notes { border: 1px solid #333; padding: 10px; min-height: 60px; }
+    .footer { margin-top: 10px; font-size: 12px; text-align: left; }
+    button { margin: 10px 5px; padding: 8px 16px; font-size: 14px; }
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Information Needed for Booking Appointments</h2>
 
-    <table>
-      <tr>
-        <td><label>Date</label><input type="date"></td>
-        <td><label>Taken By</label><input type="text"></td>
-        <td><label>Contact Name/Surname</label><input type="text"></td>
-        <td><label>Contact Phone #</label><input type="tel"></td>
-        <td><label>Contact Relationship</label><input type="text"></td>
-      </tr>
-    </table>
+  <h1>Student Intake Wizard</h1>
 
-    <table>
-      <tr>
-        <td>
-          <label>Student’s Status</label>
-          <div class="checkbox-group">
-            <label><input type="checkbox"> PR</label>
-            <label><input type="checkbox"> RC</label>
-            <label><input type="checkbox"> SP</label>
-            <label><input type="checkbox"> WP</label>
-          </div>
-        </td>
-        <td><label>Immigration Document (of Natural Parent/Guardian)</label><input type="text"></td>
-        <td><label>Expiry Date (RC/SP/WP)</label><input type="date"></td>
-        <td>
-          <label>Previous Attendance in Canadian Schools?</label>
-          <div class="radio-group">
-            <label><input type="radio" name="attendance"> No</label>
-            <label><input type="radio" name="attendance"> Yes</label>
-          </div>
-          <input type="text" placeholder="Where/Grade/For how long">
-        </td>
-        <td><label>Date Student(s) Landed in Canada</label><input type="date"></td>
-      </tr>
-    </table>
-
-    <table>
-      <tr>
-        <td><label>Father’s Surname</label><input type="text"></td>
-        <td><label>Father’s Given Name</label><input type="text"></td>
-        <td><label>Mother’s Surname</label><input type="text"></td>
-        <td><label>Mother’s Given Name</label><input type="text"></td>
-      </tr>
-    </table>
-
-    <table>
-      <tr>
-        <td><label>Apartment #</label><input type="text"></td>
-        <td><label>Family Address</label><input type="text"></td>
-        <td><label>Postal Code</label><input type="text"></td>
-      </tr>
-      <tr>
-        <td><label>Family Phone #</label><input type="tel"></td>
-        <td><label>Home Language</label><input type="text"></td>
-        <td>
-          <label>Catholic</label>
-          <div class="radio-group">
-            <label><input type="radio" name="catholic"> No</label>
-            <label><input type="radio" name="catholic"> Yes</label>
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <!-- Students Table -->
-    <table>
-      <tr>
-        <th>Student’s Surname</th>
-        <th>Student’s Given Name</th>
-        <th>Gender</th>
-        <th>DOB</th>
-        <th>Birth Country</th>
-        <th>Last Grade Completed</th>
-        <th>School Year</th>
-        <th>Program</th>
-      </tr>
-      <tr>
-        <td><input type="text"></td>
-        <td><input type="text"></td>
-        <td>
-          <div class="radio-group">
-            <label><input type="radio" name="g1"> F</label>
-            <label><input type="radio" name="g1"> M</label>
-          </div>
-        </td>
-        <td><input type="date"></td>
-        <td><input type="text"></td>
-        <td><input type="text"></td>
-        <td>
-          <div class="radio-group">
-            <label><input type="radio" name="sy1"> This Year</label>
-            <label><input type="radio" name="sy1"> Next Year</label>
-          </div>
-        </td>
-        <td>
-          <div class="radio-group">
-            <label><input type="radio" name="p1"> No</label>
-            <label><input type="radio" name="p1"> Yes</label>
-          </div>
-          <input type="text" placeholder="Specify">
-        </td>
-      </tr>
-      <!-- Duplicate rows for more students -->
-      <tr>
-        <td><input type="text"></td>
-        <td><input type="text"></td>
-        <td>
-          <div class="radio-group">
-            <label><input type="radio" name="g2"> F</label>
-            <label><input type="radio" name="g2"> M</label>
-          </div>
-        </td>
-        <td><input type="date"></td>
-        <td><input type="text"></td>
-        <td><input type="text"></td>
-        <td>
-          <div class="radio-group">
-            <label><input type="radio" name="sy2"> This Year</label>
-            <label><input type="radio" name="sy2"> Next Year</label>
-          </div>
-        </td>
-        <td>
-          <div class="radio-group">
-            <label><input type="radio" name="p2"> No</label>
-            <label><input type="radio" name="p2"> Yes</label>
-          </div>
-          <input type="text" placeholder="Specify">
-        </td>
-      </tr>
-      <tr>
-        <td><input type="text"></td>
-        <td><input type="text"></td>
-        <td>
-          <div class="radio-group">
-            <label><input type="radio" name="g3"> F</label>
-            <label><input type="radio" name="g3"> M</label>
-          </div>
-        </td>
-        <td><input type="date"></td>
-        <td><input type="text"></td>
-        <td><input type="text"></td>
-        <td>
-          <div class="radio-group">
-            <label><input type="radio" name="sy3"> This Year</label>
-            <label><input type="radio" name="sy3"> Next Year</label>
-          </div>
-        </td>
-        <td>
-          <div class="radio-group">
-            <label><input type="radio" name="p3"> No</label>
-            <label><input type="radio" name="p3"> Yes</label>
-          </div>
-          <input type="text" placeholder="Specify">
-        </td>
-      </tr>
-    </table>
-
-    <table>
-      <tr>
-        <td>
-          <label>Potential Limited Formal Schooling Profile</label>
-          <div class="radio-group">
-            <label><input type="radio" name="limited"> No</label>
-            <label><input type="radio" name="limited"> Yes</label>
-          </div>
-          <small>If YES, describe for each student (Grade 1 – Grade 12).</small>
-        </td>
-      </tr>
-    </table>
-
-    <div class="notes" contenteditable="true">
-      Notes: Click here to type...
-    </div>
-
-    <div class="footer">
-      Rev. 2021
-    </div>
+  <!-- Wizard steps -->
+  <div id="step1" class="wizard-step active">
+    <h3>Step 1: Contact Information</h3>
+    <label>Date: <input type="date" id="date"></label>
+    <label>Taken By: <input type="text" id="takenBy"></label>
+    <label>Contact Name/Surname: <input type="text" id="contactName"></label>
+    <label>Contact Phone: <input type="text" id="contactPhone"></label>
+    <label>Relationship: <input type="text" id="contactRelationship"></label>
+    <button onclick="nextStep(1)">Next</button>
   </div>
+
+  <div id="step2" class="wizard-step">
+    <h3>Step 2: Parents Info</h3>
+    <label>Father’s Surname: <input type="text" id="fatherSurname"></label>
+    <label>Father’s Given Name: <input type="text" id="fatherGiven"></label>
+    <label>Mother’s Surname: <input type="text" id="motherSurname"></label>
+    <label>Mother’s Given Name: <input type="text" id="motherGiven"></label>
+    <button onclick="prevStep(2)">Back</button>
+    <button onclick="nextStep(2)">Next</button>
+  </div>
+
+  <div id="step3" class="wizard-step">
+    <h3>Step 3: Student Info</h3>
+    <div id="students"></div>
+    <button type="button" onclick="addStudent()">Add Student</button><br>
+    <button onclick="prevStep(3)">Back</button>
+    <button onclick="generate()">Generate Yellow Form</button>
+  </div>
+
+  <!-- Final Output -->
+  <div id="finalFormOutput" style="margin-top: 30px;"></div>
+
+  <script>
+    let currentStep = 1;
+    let students = [];
+
+    function nextStep(step) {
+      document.getElementById("step" + step).classList.remove("active");
+      document.getElementById("step" + (step + 1)).classList.add("active");
+    }
+
+    function prevStep(step) {
+      document.getElementById("step" + step).classList.remove("active");
+      document.getElementById("step" + (step - 1)).classList.add("active");
+    }
+
+    function addStudent() {
+      const id = students.length;
+      const container = document.getElementById("students");
+      const html = `
+        <fieldset style="border:1px solid #aaa; padding:10px; margin-bottom:10px;">
+          <legend>Student ${id + 1}</legend>
+          <label>Surname: <input type="text" id="s_surname_${id}"></label>
+          <label>Given Name: <input type="text" id="s_given_${id}"></label>
+          <label>Gender: 
+            <select id="s_gender_${id}">
+              <option value="">--</option>
+              <option value="F">F</option>
+              <option value="M">M</option>
+            </select>
+          </label>
+          <label>DOB: <input type="date" id="s_dob_${id}"></label>
+          <label>Birth Country: <input type="text" id="s_birth_${id}"></label>
+          <label>Last Grade Completed: <input type="text" id="s_last_${id}"></label>
+          <label>School Year: 
+            <select id="s_year_${id}">
+              <option value="">--</option>
+              <option value="This Year">This Year</option>
+              <option value="Next Year">Next Year</option>
+            </select>
+          </label>
+          <label>Program: <input type="text" id="s_prog_${id}"></label>
+        </fieldset>
+      `;
+      container.insertAdjacentHTML("beforeend", html);
+      students.push(id);
+    }
+
+    function collectFormData() {
+      const formData = {
+        date: document.getElementById("date").value,
+        takenBy: document.getElementById("takenBy").value,
+        contactName: document.getElementById("contactName").value,
+        contactPhone: document.getElementById("contactPhone").value,
+        contactRelationship: document.getElementById("contactRelationship").value,
+        fatherSurname: document.getElementById("fatherSurname").value,
+        fatherGiven: document.getElementById("fatherGiven").value,
+        motherSurname: document.getElementById("motherSurname").value,
+        motherGiven: document.getElementById("motherGiven").value,
+        students: []
+      };
+
+      students.forEach(id => {
+        formData.students.push({
+          surname: document.getElementById("s_surname_" + id).value,
+          givenName: document.getElementById("s_given_" + id).value,
+          gender: document.getElementById("s_gender_" + id).value,
+          dob: document.getElementById("s_dob_" + id).value,
+          birthCountry: document.getElementById("s_birth_" + id).value,
+          lastGrade: document.getElementById("s_last_" + id).value,
+          schoolYear: document.getElementById("s_year_" + id).value,
+          program: document.getElementById("s_prog_" + id).value
+        });
+      });
+
+      return formData;
+    }
+
+    function generate() {
+      const formData = collectFormData();
+      generateFinal(formData);
+      document.getElementById("step3").classList.remove("active");
+    }
+
+    function generateFinal(formData) {
+      const output = document.getElementById("finalFormOutput");
+
+      output.innerHTML = `
+      <div class="form-container">
+        <h2>Information Needed for Booking Appointments</h2>
+
+        <table>
+          <tr>
+            <td><label>Date</label><div>${formData.date || ""}</div></td>
+            <td><label>Taken By</label><div>${formData.takenBy || ""}</div></td>
+            <td><label>Contact Name/Surname</label><div>${formData.contactName || ""}</div></td>
+            <td><label>Contact Phone #</label><div>${formData.contactPhone || ""}</div></td>
+            <td><label>Contact Relationship</label><div>${formData.contactRelationship || ""}</div></td>
+          </tr>
+        </table>
+
+        <table>
+          <tr>
+            <td><label>Father’s Surname</label><div>${formData.fatherSurname || ""}</div></td>
+            <td><label>Father’s Given Name</label><div>${formData.fatherGiven || ""}</div></td>
+            <td><label>Mother’s Surname</label><div>${formData.motherSurname || ""}</div></td>
+            <td><label>Mother’s Given Name</label><div>${formData.motherGiven || ""}</div></td>
+          </tr>
+        </table>
+
+        <table>
+          <tr>
+            <th>Student’s Surname</th>
+            <th>Student’s Given Name</th>
+            <th>Gender</th>
+            <th>DOB</th>
+            <th>Birth Country</th>
+            <th>Last Grade Completed</th>
+            <th>School Year</th>
+            <th>Program</th>
+          </tr>
+          ${formData.students.map(s => `
+            <tr>
+              <td>${s.surname || ""}</td>
+              <td>${s.givenName || ""}</td>
+              <td>${s.gender || ""}</td>
+              <td>${s.dob || ""}</td>
+              <td>${s.birthCountry || ""}</td>
+              <td>${s.lastGrade || ""}</td>
+              <td>${s.schoolYear || ""}</td>
+              <td>${s.program || ""}</td>
+            </tr>
+          `).join("")}
+        </table>
+
+        <div class="footer">Rev. 2021</div>
+      </div>
+      `;
+    }
+  </script>
 </body>
 </html>
