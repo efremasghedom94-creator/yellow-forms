@@ -4,384 +4,431 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>One World One Centre — Intake Wizard & Yellow Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- html2pdf for one-click PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
   <style>
-    /* Basic layout */
-    :root{--max-w:1100px}
-    body{font-family: Arial, Helvetica, sans-serif;background:#f3f4f6;margin:20px}
-    .app{max-width:var(--max-w);margin:0 auto}
-    h1{font-size:18px;margin-bottom:10px}
-
-    /* Wizard pages */
-    .page{display:none;background:white;border:1px solid #e6e7ea;padding:18px;border-radius:6px}
-    .page.active{display:block}
-    .controls{display:flex;justify-content:space-between;gap:10px;margin-top:12px}
-    .btn{background:#0f5132;color:white;padding:10px 14px;border:0;border-radius:6px;cursor:pointer}
-    .btn.secondary{background:#475569}
-
-    .row{display:flex;gap:12px;margin-bottom:10px}
-    .col{flex:1;min-width:120px}
-    label{display:block;font-size:13px;margin-bottom:6px}
-    input[type=text], input[type=date], textarea, select{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:4px;font-size:14px}
-    textarea{min-height:90px}
-    .checkbox-row{display:flex;gap:12px;align-items:center}
-
-    /* Final yellow form replica */
-    .preview-area{display:none;margin-top:18px}
-    .yellow-sheet{background:#FFF9C4;border:2px solid #e6d97a;padding:18px;border-radius:4px}
-    .yellow-sheet h2{margin:0 0 8px 0;font-size:16px}
-    table.form{width:100%;border-collapse:collapse;font-size:13px}
-    table.form td, table.form th{border:1px solid rgba(0,0,0,0.08);padding:8px;vertical-align:top}
-    .label-bold{font-weight:700;font-size:12px}
-    .no-border{border:0}
-
-    /* Layout tweaks to mimic picture order */
-    .wide{flex:2}
-    .small{flex:0.7}
-
+    /* small helpers */
+    .field-gap{gap:12px}
+    .disabled-input{background:#f3f4f6;color:#6b7280}
+    /* final yellow sheet styling */
+    .yellow-bg{background:#FFF9C4}
+    .checkbox-box{display:inline-block;width:20px;height:20px;border:1px solid #111;text-align:center;line-height:18px;font-weight:700;margin-right:6px}
+    .muted{color:#6b7280}
     @media print{
       body{margin:0}
-      .app > :not(.preview-area){display:none}
-      .preview-area{display:block}
-      .yellow-sheet{box-shadow:none;border:0}
-      .no-print{display:none}
+      .wizard{display:none}
+      .final-wrap{display:block}
     }
   </style>
 </head>
-<body>
-  <div class="app">
-    <h1>INFORMATION NEEDED FOR BOOKING APPOINTMENTS — Wizard</h1>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-5xl mx-auto p-6">
 
-    <!-- Page 1: Contact header -->
-    <div class="page active" data-step="1" id="page-1">
-      <h3>Step 1 — Contact & Intake</h3>
-      <div class="row">
-        <div class="col small"><label>DATE</label><input type="date" id="date"/></div>
-        <div class="col"><label>TAKEN BY</label><input type="text" id="takenBy" placeholder="Name"/></div>
-        <div class="col wide"><label>CONTACT NAME/SURNAME</label><input type="text" id="contactName"/></div>
-        <div class="col small"><label>CONTACT PHONE #</label><input type="text" id="contactPhone"/></div>
-        <div class="col small"><label>CONTACT RELATIONSHIP</label><input type="text" id="contactRel"/></div>
-      </div>
-      <div class="controls no-print">
-        <div></div>
-        <div>
-          <button class="btn" id="next1">Next</button>
-        </div>
-      </div>
-    </div>
+    <div id="wizardRoot" class="wizard bg-white rounded-lg shadow p-6">
+      <h1 class="text-xl font-semibold mb-4">INFORMATION NEEDED FOR BOOKING APPOINTMENTS — Wizard</h1>
 
-    <!-- Page 2: Immigration -->
-    <div class="page" data-step="2" id="page-2">
-      <h3>Step 2 — Immigration & School Attendance</h3>
-      <div class="row">
-        <div class="col"><label>STUDENT'S STATUS</label><input type="text" id="studentStatus"/></div>
-        <div class="col wide">
-          <label>IMMIGRATION DOCUMENT (OF NATURAL PARENT/GUARDIAN)</label>
-          <div class="checkbox-row">
-            <label><input type="checkbox" id="docPR"/> PR</label>
-            <label><input type="checkbox" id="docRC"/> RC</label>
-            <label><input type="checkbox" id="docSP"/> SP</label>
-            <label><input type="checkbox" id="docWP"/> WP</label>
+      <!-- PAGE 1 -->
+      <section class="page" data-step="1">
+        <h2 class="font-medium mb-3">Step 1 — Contact & Intake</h2>
+        <div class="grid grid-cols-12 gap-3">
+          <div class="col-span-2">
+            <label class="block text-sm">DATE</label>
+            <input id="date" type="date" class="w-full border rounded p-2 mt-1" />
+          </div>
+          <div class="col-span-3">
+            <label class="block text-sm">TAKEN BY</label>
+            <input id="takenBy" type="text" class="w-full border rounded p-2 mt-1" placeholder="Name" />
+          </div>
+          <div class="col-span-4">
+            <label class="block text-sm">CONTACT NAME / SURNAME</label>
+            <input id="contactName" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+          <div class="col-span-2">
+            <label class="block text-sm">CONTACT PHONE #</label>
+            <input id="contactPhone" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+          <div class="col-span-1">
+            <label class="block text-sm">RELATION</label>
+            <input id="contactRel" type="text" class="w-full border rounded p-2 mt-1" />
           </div>
         </div>
-        <div class="col small"><label>EXPIRY DATE (RC/SP/WP)</label><input type="date" id="expiry"/></div>
-      </div>
-      <div class="row">
-        <div class="col small"><label>PREVIOUS ATTENDANCE IN CANADIAN SCHOOLS?</label>
-          <div class="checkbox-row"><label><input type="checkbox" id="prevNo"/> NO</label><label><input type="checkbox" id="prevYes"/> YES</label></div>
+
+        <div class="flex justify-end mt-4">
+          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="goTo(2)">Next</button>
         </div>
-        <div class="col"><label>IF YES: WHERE/GRADE/FOR HOW LONG</label><input type="text" id="prevDetails"/></div>
-        <div class="col"><label>DATE STUDENT(S) LANDED IN CANADA</label><input type="date" id="landed"/></div>
-      </div>
-      <div class="controls no-print">
-        <button class="btn secondary" id="back2">Back</button>
-        <button class="btn" id="next2">Next</button>
-      </div>
+      </section>
+
+      <!-- PAGE 2 -->
+      <section class="page hidden" data-step="2">
+        <h2 class="font-medium mb-3">Step 2 — Immigration & Attendance</h2>
+
+        <div class="grid grid-cols-12 gap-3 mb-3">
+          <div class="col-span-6">
+            <label class="block text-sm">STUDENT'S STATUS</label>
+            <div class="mt-1 flex flex-wrap gap-3 items-center">
+              <label class="inline-flex items-center"><input type="radio" name="studentStatus" value="PR" class="mr-2">PR</label>
+              <label class="inline-flex items-center"><input type="radio" name="studentStatus" value="RC" class="mr-2">RC</label>
+              <label class="inline-flex items-center"><input type="radio" name="studentStatus" value="SP" class="mr-2">SP</label>
+              <label class="inline-flex items-center"><input type="radio" name="studentStatus" value="WP" class="mr-2">WP</label>
+              <label class="inline-flex items-center"><input type="radio" name="studentStatus" value="Other" class="mr-2" onchange="toggleOtherField('studentStatusOther', this)">Other</label>
+              <input id="studentStatusOther" type="text" class="hidden border rounded p-2" placeholder="Specify" />
+            </div>
+          </div>
+
+          <div class="col-span-6">
+            <label class="block text-sm">IMMIGRATION DOCUMENT (OF NATURAL PARENT / GUARDIAN)</label>
+            <div class="mt-1 flex flex-wrap gap-3 items-center">
+              <label class="inline-flex items-center"><input type="radio" name="immDoc" value="PR" class="mr-2">PR</label>
+              <label class="inline-flex items-center"><input type="radio" name="immDoc" value="RC" class="mr-2">RC</label>
+              <label class="inline-flex items-center"><input type="radio" name="immDoc" value="SP" class="mr-2">SP</label>
+              <label class="inline-flex items-center"><input type="radio" name="immDoc" value="WP" class="mr-2">WP</label>
+              <label class="inline-flex items-center"><input type="radio" name="immDoc" value="Other" class="mr-2" onchange="toggleOtherField('immDocOther', this)">Other</label>
+              <input id="immDocOther" type="text" class="hidden border rounded p-2" placeholder="Specify" />
+            </div>
+          </div>
+
+          <div class="col-span-4 mt-2">
+            <label class="block text-sm">EXPIRY DATE (RC / SP / WP)</label>
+            <input id="expiry" type="date" class="w-full border rounded p-2 mt-1" />
+          </div>
+
+          <div class="col-span-8 mt-2">
+            <label class="block text-sm">PREVIOUS ATTENDANCE IN CANADIAN SCHOOLS?</label>
+            <div class="mt-1 flex items-center gap-6">
+              <label class="inline-flex items-center"><input type="radio" name="prevAttend" value="No" onchange="toggleAttendance(false)" class="mr-2">No</label>
+              <label class="inline-flex items-center"><input type="radio" name="prevAttend" value="Yes" onchange="toggleAttendance(true)" class="mr-2">Yes</label>
+            </div>
+            <input id="prevDetails" type="text" class="mt-2 w-full border rounded p-2 disabled-input" placeholder="If Yes: Where / Grade / For how long" disabled />
+          </div>
+
+          <div class="col-span-12 mt-2">
+            <label class="block text-sm">DATE STUDENT(S) LANDED IN CANADA</label>
+            <input id="landed" type="date" class="w-full border rounded p-2 mt-1" />
+          </div>
+        </div>
+
+        <div class="flex justify-between">
+          <button class="px-4 py-2 bg-gray-500 text-white rounded" onclick="goTo(1)">Back</button>
+          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="goTo(3)">Next</button>
+        </div>
+      </section>
+
+      <!-- PAGE 3 Parents -->
+      <section class="page hidden" data-step="3">
+        <h2 class="font-medium mb-3">Step 3 — Parent / Guardian</h2>
+        <div class="grid grid-cols-12 gap-3">
+          <div class="col-span-3">
+            <label class="block text-sm">FATHER'S SURNAME</label>
+            <input id="fatherSurname" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+          <div class="col-span-3">
+            <label class="block text-sm">FATHER'S GIVEN NAME</label>
+            <input id="fatherGiven" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+          <div class="col-span-3">
+            <label class="block text-sm">MOTHER'S SURNAME</label>
+            <input id="motherSurname" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+          <div class="col-span-3">
+            <label class="block text-sm">MOTHER'S GIVEN NAME</label>
+            <input id="motherGiven" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+        </div>
+        <div class="flex justify-between mt-4">
+          <button class="px-4 py-2 bg-gray-500 text-white rounded" onclick="goTo(2)">Back</button>
+          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="goTo(4)">Next</button>
+        </div>
+      </section>
+
+      <!-- PAGE 4 Address & family -->
+      <section class="page hidden" data-step="4">
+        <h2 class="font-medium mb-3">Step 4 — Address & Family</h2>
+        <div class="grid grid-cols-12 gap-3">
+          <div class="col-span-2">
+            <label class="block text-sm">APARTMENT #</label>
+            <input id="apt" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+          <div class="col-span-8">
+            <label class="block text-sm">FAMILY ADDRESS</label>
+            <input id="address" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+          <div class="col-span-2">
+            <label class="block text-sm">POSTAL CODE</label>
+            <input id="postal" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+
+          <div class="col-span-4 mt-2">
+            <label class="block text-sm">FAMILY PHONE #</label>
+            <input id="familyPhone" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+          <div class="col-span-4 mt-2">
+            <label class="block text-sm">HOME LANGUAGE</label>
+            <input id="homeLang" type="text" class="w-full border rounded p-2 mt-1" />
+          </div>
+          <div class="col-span-4 mt-2">
+            <label class="block text-sm">CATHOLIC</label>
+            <div class="mt-1 flex items-center gap-6">
+              <label class="inline-flex items-center"><input type="radio" name="catholic" value="No" class="mr-2">No</label>
+              <label class="inline-flex items-center"><input type="radio" name="catholic" value="Yes" class="mr-2">Yes</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between mt-4">
+          <button class="px-4 py-2 bg-gray-500 text-white rounded" onclick="goTo(3)">Back</button>
+          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="goTo(5)">Next</button>
+        </div>
+      </section>
+
+      <!-- PAGE 5 Students (dynamic add) -->
+      <section class="page hidden" data-step="5">
+        <h2 class="font-medium mb-3">Step 5 — Student Details (Add as many as needed)</h2>
+        <div id="studentsContainer" class="space-y-4">
+          <!-- template inserted by JS -->
+        </div>
+        <div class="flex items-center gap-3 mt-3">
+          <button class="px-3 py-2 bg-blue-600 text-white rounded" onclick="addStudent()" type="button">Add Student</button>
+          <button class="px-3 py-2 bg-red-500 text-white rounded" onclick="removeStudent()" type="button">Remove Last</button>
+        </div>
+
+        <div class="flex justify-between mt-4">
+          <button class="px-4 py-2 bg-gray-500 text-white rounded" onclick="goTo(4)">Back</button>
+          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="goTo(6)">Next</button>
+        </div>
+      </section>
+
+      <!-- PAGE 6 Schooling profile & notes -->
+      <section class="page hidden" data-step="6">
+        <h2 class="font-medium mb-3">Step 6 — Schooling Profile & Notes</h2>
+        <div class="grid grid-cols-12 gap-3">
+          <div class="col-span-4">
+            <label class="block text-sm">POTENTIAL LIMITED FORMAL SCHOOLING PROFILE</label>
+            <div class="mt-1 flex items-center gap-6">
+              <label class="inline-flex items-center"><input type="radio" name="limitedProfile" value="No">No</label>
+              <label class="inline-flex items-center"><input type="radio" name="limitedProfile" value="Yes">Yes</label>
+            </div>
+          </div>
+          <div class="col-span-8">
+            <label class="block text-sm">DETAILS (Number of years as refugees, country of relocation, refugee camp name, nature of schooling, parent country of origin)</label>
+            <textarea id="notes" class="w-full border rounded p-2 mt-1" placeholder="Describe if relevant"></textarea>
+          </div>
+        </div>
+
+        <div class="flex justify-between mt-4">
+          <button class="px-4 py-2 bg-gray-500 text-white rounded" onclick="goTo(5)">Back</button>
+          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="generateFinal()">Generate Yellow Form</button>
+        </div>
+      </section>
+
     </div>
 
-    <!-- Page 3: Parents -->
-    <div class="page" data-step="3" id="page-3">
-      <h3>Step 3 — Parent / Guardian</h3>
-      <div class="row">
-        <div class="col"><label>FATHER'S SURNAME</label><input type="text" id="fatherSurname"/></div>
-        <div class="col"><label>FATHER'S GIVEN NAME</label><input type="text" id="fatherGiven"/></div>
-        <div class="col"><label>MOTHER'S SURNAME</label><input type="text" id="motherSurname"/></div>
-        <div class="col"><label>MOTHER'S GIVEN NAME</label><input type="text" id="motherGiven"/></div>
-      </div>
-      <div class="controls no-print">
-        <button class="btn secondary" id="back3">Back</button>
-        <button class="btn" id="next3">Next</button>
-      </div>
-    </div>
-
-    <!-- Page 4: Address & family -->
-    <div class="page" data-step="4" id="page-4">
-      <h3>Step 4 — Address & Family</h3>
-      <div class="row">
-        <div class="col small"><label>APARTMENT #</label><input type="text" id="apt"/></div>
-        <div class="col wide"><label>FAMILY ADDRESS</label><input type="text" id="address"/></div>
-        <div class="col small"><label>POSTAL CODE</label><input type="text" id="postal"/></div>
-      </div>
-      <div class="row">
-        <div class="col small"><label>FAMILY PHONE #</label><input type="text" id="familyPhone"/></div>
-        <div class="col"><label>HOME LANGUAGE</label><input type="text" id="homeLang"/></div>
-        <div class="col small"><label>CATHOLIC</label><div class="checkbox-row"><label><input type="checkbox" id="cathNo"/> NO</label><label><input type="checkbox" id="cathYes"/> YES</label></div></div>
-      </div>
-      <div class="controls no-print">
-        <button class="btn secondary" id="back4">Back</button>
-        <button class="btn" id="next4">Next</button>
-      </div>
-    </div>
-
-    <!-- Page 5: Students - repeat for 3 students -->
-    <div class="page" data-step="5" id="page-5">
-      <h3>Step 5 — Student Details (up to 3 students)</h3>
-
-      <div class="student-block" data-idx="1">
-        <h4>Student 1</h4>
-        <div class="row">
-          <div class="col"><label>STUDENT'S SURNAME</label><input type="text" id="s1_surname"/></div>
-          <div class="col"><label>STUDENT'S GIVEN NAME</label><input type="text" id="s1_given"/></div>
-          <div class="col small"><label>GENDER</label><div class="checkbox-row"><label><input type="checkbox" id="s1_f"/> F</label><label><input type="checkbox" id="s1_m"/> M</label></div></div>
-          <div class="col small"><label>DOB (MMM/DD/YYYY)</label><input type="date" id="s1_dob"/></div>
-          <div class="col"><label>BIRTH COUNTRY</label><input type="text" id="s1_birth"/></div>
-        </div>
-        <div class="row">
-          <div class="col"><label>LAST GRADE COMPLETED</label><input type="text" id="s1_lastgrade"/></div>
-          <div class="col small"><label>SCHOOL YEAR</label><div class="checkbox-row"><label><input type="checkbox" id="s1_this"/> THIS YEAR</label><label><input type="checkbox" id="s1_next"/> NEXT YEAR</label></div></div>
-          <div class="col"><label>PROGRAM</label><div class="checkbox-row"><label><input type="checkbox" id="s1_prog_no"/> NO</label><label><input type="checkbox" id="s1_prog_yes"/> YES</label></div><input type="text" id="s1_prog_spec" placeholder="Specify" style="margin-top:6px"/></div>
-        </div>
+    <!-- FINAL STATIC YELLOW FORM -->
+    <div id="finalWrap" class="final-wrap hidden mt-6">
+      <div id="finalArea" class="yellow-bg p-6 rounded shadow border">
+        <!-- content injected here -->
       </div>
 
-      <hr/>
-
-      <div class="student-block" data-idx="2">
-        <h4>Student 2</h4>
-        <div class="row">
-          <div class="col"><label>STUDENT'S SURNAME</label><input type="text" id="s2_surname"/></div>
-          <div class="col"><label>STUDENT'S GIVEN NAME</label><input type="text" id="s2_given"/></div>
-          <div class="col small"><label>GENDER</label><div class="checkbox-row"><label><input type="checkbox" id="s2_f"/> F</label><label><input type="checkbox" id="s2_m"/> M</label></div></div>
-          <div class="col small"><label>DOB (MMM/DD/YYYY)</label><input type="date" id="s2_dob"/></div>
-          <div class="col"><label>BIRTH COUNTRY</label><input type="text" id="s2_birth"/></div>
-        </div>
-        <div class="row">
-          <div class="col"><label>LAST GRADE COMPLETED</label><input type="text" id="s2_lastgrade"/></div>
-          <div class="col small"><label>SCHOOL YEAR</label><div class="checkbox-row"><label><input type="checkbox" id="s2_this"/> THIS YEAR</label><label><input type="checkbox" id="s2_next"/> NEXT YEAR</label></div></div>
-          <div class="col"><label>PROGRAM</label><div class="checkbox-row"><label><input type="checkbox" id="s2_prog_no"/> NO</label><label><input type="checkbox" id="s2_prog_yes"/> YES</label></div><input type="text" id="s2_prog_spec" placeholder="Specify" style="margin-top:6px"/></div>
-        </div>
-      </div>
-
-      <hr/>
-
-      <div class="student-block" data-idx="3">
-        <h4>Student 3</h4>
-        <div class="row">
-          <div class="col"><label>STUDENT'S SURNAME</label><input type="text" id="s3_surname"/></div>
-          <div class="col"><label>STUDENT'S GIVEN NAME</label><input type="text" id="s3_given"/></div>
-          <div class="col small"><label>GENDER</label><div class="checkbox-row"><label><input type="checkbox" id="s3_f"/> F</label><label><input type="checkbox" id="s3_m"/> M</label></div></div>
-          <div class="col small"><label>DOB (MMM/DD/YYYY)</label><input type="date" id="s3_dob"/></div>
-          <div class="col"><label>BIRTH COUNTRY</label><input type="text" id="s3_birth"/></div>
-        </div>
-        <div class="row">
-          <div class="col"><label>LAST GRADE COMPLETED</label><input type="text" id="s3_lastgrade"/></div>
-          <div class="col small"><label>SCHOOL YEAR</label><div class="checkbox-row"><label><input type="checkbox" id="s3_this"/> THIS YEAR</label><label><input type="checkbox" id="s3_next"/> NEXT YEAR</label></div></div>
-          <div class="col"><label>PROGRAM</label><div class="checkbox-row"><label><input type="checkbox" id="s3_prog_no"/> NO</label><label><input type="checkbox" id="s3_prog_yes"/> YES</label></div><input type="text" id="s3_prog_spec" placeholder="Specify" style="margin-top:6px"/></div>
-        </div>
-      </div>
-
-      <div class="controls no-print">
-        <button class="btn secondary" id="back5">Back</button>
-        <button class="btn" id="next5">Next</button>
-      </div>
-    </div>
-
-    <!-- Page 6: Schooling profile & notes -->
-    <div class="page" data-step="6" id="page-6">
-      <h3>Step 6 — Schooling Profile & Notes</h3>
-      <div class="row">
-        <div class="col"><label>POTENTIAL LIMITED FORMAL SCHOOLING PROFILE</label><div class="checkbox-row"><label><input type="checkbox" id="limitedNo"/> NO</label><label><input type="checkbox" id="limitedYes"/> YES</label></div></div>
-      </div>
-      <div>
-        <label>Number of years as refugees, country of relocation, refugee camp name, nature of schooling, parent country of origin (as relevant)</label>
-        <textarea id="notes"></textarea>
-      </div>
-
-      <div class="controls no-print">
-        <button class="btn secondary" id="back6">Back</button>
-        <button class="btn" id="generate">Generate Yellow Form</button>
-      </div>
-    </div>
-
-    <!-- Preview area (yellow static form) -->
-    <div class="preview-area" id="previewArea">
-      <div class="yellow-sheet">
-        <h2>INFORMATION NEEDED FOR BOOKING APPOINTMENTS</h2>
-        <table class="form" id="finalTable">
-          <!-- We'll inject rows exactly in the order and format matching the picture -->
-        </table>
-        <div style="margin-top:10px;display:flex;gap:10px">
-          <button class="btn" id="printBtn" onclick="window.print()">Print / Save as PDF</button>
-          <button class="btn secondary" id="editBtn">Edit (Back to Wizard)</button>
-        </div>
+      <div class="mt-4 flex gap-3">
+        <button id="printBtn" class="px-4 py-2 bg-blue-600 text-white rounded" onclick="window.print()">Print</button>
+        <button id="pdfBtn" class="px-4 py-2 bg-indigo-600 text-white rounded">Download PDF</button>
+        <button id="editBtn" class="px-4 py-2 bg-gray-500 text-white rounded">Back to Edit</button>
       </div>
     </div>
 
   </div>
 
   <script>
-    // Simple page navigation
-    const pages = Array.from(document.querySelectorAll('.page'))
-    function show(step){
-      pages.forEach(p=>p.classList.toggle('active', p.dataset.step==step))
+    // --- Wizard navigation ---
+    function goTo(step){
+      document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'))
+      const target = document.querySelector(`.page[data-step='${step}']`)
+      if(target) target.classList.remove('hidden')
       window.scrollTo({top:0,behavior:'smooth'})
     }
 
-    document.getElementById('next1').addEventListener('click',()=>show('2'))
-    document.getElementById('back2').addEventListener('click',()=>show('1'))
-    document.getElementById('next2').addEventListener('click',()=>show('3'))
-    document.getElementById('back3').addEventListener('click',()=>show('2'))
-    document.getElementById('next3').addEventListener('click',()=>show('4'))
-    document.getElementById('back4').addEventListener('click',()=>show('3'))
-    document.getElementById('next4').addEventListener('click',()=>show('5'))
-    document.getElementById('back5').addEventListener('click',()=>show('4'))
-    document.getElementById('next5').addEventListener('click',()=>show('6'))
-    document.getElementById('back6').addEventListener('click',()=>show('5'))
+    // --- toggle Other text fields for radio groups ---
+    function toggleOtherField(id, el){
+      const inp = document.getElementById(id)
+      if(el.value === 'Other' && el.checked){ inp.classList.remove('hidden'); inp.focus() } else { inp.classList.add('hidden'); inp.value = '' }
+    }
 
-    // helper
-    function val(id){const el=document.getElementById(id);return el?el.value:''}
-    function checked(id){const el=document.getElementById(id);return el?el.checked:false}
+    // --- Attendance enabling/disabling ---
+    function toggleAttendance(isYes){
+      const d = document.getElementById('prevDetails')
+      if(isYes){ d.disabled = false; d.classList.remove('disabled-input') } else { d.disabled = true; d.classList.add('disabled-input'); d.value = '' }
+    }
 
-    // generate final table exactly in order as picture
-    function buildFinal(){
-      const t=document.getElementById('finalTable')
-      t.innerHTML=''
+    // --- Dynamic students ---
+    let studentCount = 0
+    function addStudent(prefill){
+      studentCount++
+      const id = studentCount
+      const container = document.getElementById('studentsContainer')
+      const wrap = document.createElement('div')
+      wrap.className = 'p-4 border rounded bg-gray-50'
+      wrap.id = `student-${id}`
+      wrap.innerHTML = `
+        <div class="grid grid-cols-12 gap-3">
+          <div class="col-span-3">
+            <label class="text-sm">STUDENT'S SURNAME</label>
+            <input type="text" id="s_${id}_surname" class="w-full border rounded p-2 mt-1" value="${prefill?.surname||''}" />
+          </div>
+          <div class="col-span-3">
+            <label class="text-sm">STUDENT'S GIVEN NAME</label>
+            <input type="text" id="s_${id}_given" class="w-full border rounded p-2 mt-1" value="${prefill?.given||''}" />
+          </div>
+          <div class="col-span-2">
+            <label class="text-sm">GENDER</label>
+            <div class="mt-1 flex items-center gap-3">
+              <label class="inline-flex items-center"><input type="radio" name="s_${id}_gender" value="F" class="mr-2">F</label>
+              <label class="inline-flex items-center"><input type="radio" name="s_${id}_gender" value="M" class="mr-2">M</label>
+            </div>
+          </div>
+          <div class="col-span-2">
+            <label class="text-sm">DOB</label>
+            <input type="date" id="s_${id}_dob" class="w-full border rounded p-2 mt-1" value="${prefill?.dob||''}" />
+          </div>
+          <div class="col-span-2">
+            <label class="text-sm">BIRTH COUNTRY</label>
+            <input type="text" id="s_${id}_birth" class="w-full border rounded p-2 mt-1" value="${prefill?.birth||''}" />
+          </div>
 
-      // 1. Top header row: DATE | TAKEN BY | CONTACT NAME | CONTACT PHONE | CONTACT RELATIONSHIP
-      const r1=document.createElement('tr')
-      r1.innerHTML=`<td class="label-bold">DATE</td><td>${val('date')}</td><td class="label-bold">TAKEN BY</td><td>${val('takenBy')}</td>`
-      t.appendChild(r1)
+          <div class="col-span-4 mt-2">
+            <label class="text-sm">LAST GRADE COMPLETED</label>
+            <input type="text" id="s_${id}_lastgrade" class="w-full border rounded p-2 mt-1" value="${prefill?.lastgrade||''}" />
+          </div>
+          <div class="col-span-4 mt-2">
+            <label class="text-sm">SCHOOL YEAR</label>
+            <div class="mt-1 flex items-center gap-3">
+              <label class="inline-flex items-center"><input type="radio" name="s_${id}_year" value="ThisYear" class="mr-2">This year</label>
+              <label class="inline-flex items-center"><input type="radio" name="s_${id}_year" value="NextYear" class="mr-2">Next year</label>
+            </div>
+          </div>
+          <div class="col-span-4 mt-2">
+            <label class="text-sm">PROGRAM</label>
+            <div class="mt-1 flex items-center gap-3">
+              <label class="inline-flex items-center"><input type="radio" name="s_${id}_prog" value="No" class="mr-2">No</label>
+              <label class="inline-flex items-center"><input type="radio" name="s_${id}_prog" value="Yes" class="mr-2">Yes</label>
+              <input type="text" id="s_${id}_prog_spec" class="border rounded p-2 ml-2" placeholder="Specify (if Yes)" />
+            </div>
+          </div>
+        </div>
+      `
+      container.appendChild(wrap)
+      window.scrollTo({top:wrap.offsetTop-60, behavior:'smooth'})
+    }
+    function removeStudent(){ if(studentCount===0) return; const el=document.getElementById(`student-${studentCount}`); if(el) el.remove(); studentCount-- }
 
-      const r2=document.createElement('tr')
-      r2.innerHTML=`<td class="label-bold">CONTACT NAME/SURNAME</td><td>${val('contactName')}</td><td class="label-bold">CONTACT PHONE #</td><td>${val('contactPhone')}</td>`
-      t.appendChild(r2)
+    // start with 1 student by default
+    addStudent()
 
-      const r3=document.createElement('tr')
-      r3.innerHTML=`<td class="label-bold">CONTACT RELATIONSHIP</td><td colspan="3">${val('contactRel')}</td>`
-      t.appendChild(r3)
+    // --- Build final static yellow form ---
+    function checkboxMark(cond){ return cond ? '☑' : '☐' }
 
-      // immigration row
-      const r4=document.createElement('tr')
-      const docs = [checked('docPR')? 'PR':'', checked('docRC')? 'RC':'', checked('docSP')? 'SP':'', checked('docWP')? 'WP':''].filter(Boolean).join(' ')
-      r4.innerHTML=`<td class="label-bold">STUDENT'S STATUS</td><td>${val('studentStatus')}</td><td class="label-bold">IMMIGRATION DOCUMENT (OF NATURAL PARENT/GUARDIAN)</td><td>${docs}</td>`
-      t.appendChild(r4)
+    function getRadioValue(name){ const r=document.querySelector(`input[name='${name}']:checked`); return r? r.value : '' }
 
-      const r5=document.createElement('tr')
-      r5.innerHTML=`<td class="label-bold">EXPIRY DATE (RC/SP/WP)</td><td>${val('expiry')}</td><td class="label-bold">PREVIOUS ATTENDANCE IN CANADIAN SCHOOLS?</td><td>${checked('prevNo')? 'NO':''} ${checked('prevYes')? 'YES':''} ${val('prevDetails')? ' — '+val('prevDetails'):''}</td>`
-      t.appendChild(r5)
+    function generateFinal(){
+      const final = document.getElementById('finalArea')
+      final.innerHTML = ''
 
-      const r6=document.createElement('tr')
-      r6.innerHTML=`<td class="label-bold">DATE STUDENT(S) LANDED IN CANADA</td><td colspan="3">${val('landed')}</td>`
-      t.appendChild(r6)
+      // Top table following order/labels
+      const tbl = document.createElement('table')
+      tbl.className = 'w-full border-collapse'
 
-      // parents
-      const r7=document.createElement('tr')
-      r7.innerHTML=`<td class="label-bold">FATHER'S SURNAME</td><td>${val('fatherSurname')}</td><td class="label-bold">FATHER'S GIVEN NAME</td><td>${val('fatherGiven')}</td>`
-      t.appendChild(r7)
+      function addRow(label, col1, label2, col2, mutedCol1){
+        const tr = document.createElement('tr')
+        tr.innerHTML = `
+          <td class="p-2 border font-semibold w-40">${label}</td>
+          <td class="p-2 border ${mutedCol1? 'muted':''}">${col1||''}</td>
+          <td class="p-2 border font-semibold w-40">${label2||''}</td>
+          <td class="p-2 border">${col2||''}</td>
+        `
+        tbl.appendChild(tr)
+      }
 
-      const r8=document.createElement('tr')
-      r8.innerHTML=`<td class="label-bold">MOTHER'S SURNAME</td><td>${val('motherSurname')}</td><td class="label-bold">MOTHER'S GIVEN NAME</td><td>${val('motherGiven')}</td>`
-      t.appendChild(r8)
+      addRow('DATE', document.getElementById('date').value, 'TAKEN BY', document.getElementById('takenBy').value)
+      addRow('CONTACT NAME/SURNAME', document.getElementById('contactName').value, 'CONTACT PHONE #', document.getElementById('contactPhone').value)
+      addRow('CONTACT RELATIONSHIP', document.getElementById('contactRel').value, '', '')
 
-      // address row
-      const r9=document.createElement('tr')
-      r9.innerHTML=`<td class="label-bold">APARTMENT #</td><td>${val('apt')}</td><td class="label-bold">FAMILY ADDRESS</td><td>${val('address')} ${val('postal')? ' / '+val('postal'): ''}</td>`
-      t.appendChild(r9)
+      // immigration row (student status with radio + other)
+      const sStatus = getRadioValue('studentStatus')
+      const sStatusOther = document.getElementById('studentStatusOther').value
+      const imm = getRadioValue('immDoc')
+      const immOther = document.getElementById('immDocOther').value
+      const statusText = sStatus === 'Other' ? sStatusOther : (sStatus || '')
+      const immText = imm === 'Other' ? immOther : (imm || '')
+      addRow("STUDENT'S STATUS", statusText, 'IMMIGRATION DOCUMENT (OF NATURAL PARENT/GUARDIAN)', immText)
 
-      const r10=document.createElement('tr')
-      r10.innerHTML=`<td class="label-bold">FAMILY PHONE #</td><td>${val('familyPhone')}</td><td class="label-bold">HOME LANGUAGE</td><td>${val('homeLang')} ${checked('cathNo')? ' / Catholic: NO':''} ${checked('cathYes')? ' / Catholic: YES':''}</td>`
-      t.appendChild(r10)
+      addRow('EXPIRY DATE (RC/SP/WP)', document.getElementById('expiry').value, 'PREVIOUS ATTENDANCE IN CANADIAN SCHOOLS?', (function(){
+        const val = getRadioValue('prevAttend')
+        if(val==='Yes') return checkboxMark(true)+' Yes'
+        if(val==='No') return checkboxMark(true)+' No'
+        return ''
+      })())
 
-      // student blocks (3)
-      for(let i=1;i<=3;i++){
-        const sSurname = val('s'+i+'_surname')
-        const sGiven = val('s'+i+'_given')
-        const sF = checked('s'+i+'_f')
-        const sM = checked('s'+i+'_m')
-        const sDob = val('s'+i+'_dob')
-        const sBirth = val('s'+i+'_birth')
-        const sLast = val('s'+i+'_lastgrade')
-        const sThis = checked('s'+i+'_this')
-        const sNext = checked('s'+i+'_next')
-        const sProgNo = checked('s'+i+'_prog_no')
-        const sProgYes = checked('s'+i+'_prog_yes')
-        const sProgSpec = val('s'+i+'_prog_spec')
+      // prev details — gray out if disabled (No)
+      const prevDetails = document.getElementById('prevDetails')
+      const prevShown = prevDetails.value
+      const prevMuted = prevDetails.disabled
+      addRow('DATE STUDENT(S) LANDED IN CANADA', document.getElementById('landed').value, 'PREVIOUS DETAILS', `<span class="${prevMuted? 'muted':''}">${prevShown|| (prevMuted? '—':'' )}</span>`, prevMuted)
 
-        // only render student if surname or given name provided
-        if(sSurname || sGiven || sBirth || sLast){
-          const a=document.createElement('tr')
-          a.innerHTML=`<td class="label-bold">STUDENT'S SURNAME</td><td>${sSurname}</td><td class="label-bold">STUDENT'S GIVEN NAME</td><td>${sGiven}</td>`
-          t.appendChild(a)
+      addRow("FATHER'S SURNAME", document.getElementById('fatherSurname').value, "FATHER'S GIVEN NAME", document.getElementById('fatherGiven').value)
+      addRow("MOTHER'S SURNAME", document.getElementById('motherSurname').value, "MOTHER'S GIVEN NAME", document.getElementById('motherGiven').value)
 
-          const b=document.createElement('tr')
-          const gender = (sF? 'F ':'') + (sM? 'M ':'')
-          b.innerHTML=`<td class="label-bold">GENDER / DOB</td><td>${gender} / ${sDob}</td><td class="label-bold">BIRTH COUNTRY</td><td>${sBirth}</td>`
-          t.appendChild(b)
+      addRow('APARTMENT #', document.getElementById('apt').value, 'FAMILY ADDRESS', document.getElementById('address').value + (document.getElementById('postal').value? ' / '+document.getElementById('postal').value : ''))
+      addRow('FAMILY PHONE #', document.getElementById('familyPhone').value, 'HOME LANGUAGE', document.getElementById('homeLang').value + '  ' + (function(){ const c=getRadioValue('catholic'); return c? (checkboxMark(c==='Yes')+' Yes   '+checkboxMark(c==='No')+' No') : '' })())
 
-          const c=document.createElement('tr')
-          const sy = (sThis? 'This year ':'') + (sNext? 'Next year ':'')
-          const prog = (sProgNo? 'NO ':'') + (sProgYes? 'YES ':'') + (sProgSpec? ' / '+sProgSpec : '')
-          c.innerHTML=`<td class="label-bold">LAST GRADE COMPLETED</td><td>${sLast}</td><td class="label-bold">SCHOOL YEAR / PROGRAM</td><td>${sy} / ${prog}</td>`
-          t.appendChild(c)
+      // students
+      const header = document.createElement('tr')
+      header.innerHTML = `<td class="p-2 border font-semibold">STUDENT(S)</td><td class="p-2 border" colspan="3"></td>`
+      tbl.appendChild(header)
+
+      for(let i=1;i<=studentCount;i++){
+        const surname = document.getElementById(`s_${i}_surname`)?.value || ''
+        const given = document.getElementById(`s_${i}_given`)?.value || ''
+        const gender = (function(){ const g = document.querySelector(`input[name='s_${i}_gender']:checked`); return g? g.value : '' })()
+        const dob = document.getElementById(`s_${i}_dob`)?.value || ''
+        const birth = document.getElementById(`s_${i}_birth`)?.value || ''
+        const last = document.getElementById(`s_${i}_lastgrade`)?.value || ''
+        const year = (function(){ const y = document.querySelector(`input[name='s_${i}_year']:checked`); return y? y.value : '' })()
+        const prog = (function(){ const p = document.querySelector(`input[name='s_${i}_prog']:checked`); return p? p.value : '' })()
+        const progSpec = document.getElementById(`s_${i}_prog_spec`)?.value || ''
+
+        if(surname || given || birth || last){
+          addRow("STUDENT'S SURNAME", surname, "STUDENT'S GIVEN NAME", given)
+          addRow('GENDER / DOB', `${checkboxMark(gender==='F')} F ${checkboxMark(gender==='M')} M  / ${dob}`, 'BIRTH COUNTRY', birth)
+          addRow('LAST GRADE COMPLETED', last, 'SCHOOL YEAR / PROGRAM', `${year? year.replace('ThisYear','This year').replace('NextYear','Next year') : ''} / ${prog? (prog + (progSpec? ' — '+progSpec:'')) : ''}`)
         }
       }
 
       // limited & notes
-      const li=document.createElement('tr')
-      li.innerHTML=`<td class="label-bold">POTENTIAL LIMITED FORMAL SCHOOLING PROFILE</td><td colspan="3">${checked('limitedNo')? 'NO':''} ${checked('limitedYes')? 'YES':''}</td>`
-      t.appendChild(li)
+      const limited = getRadioValue('limitedProfile')
+      const notes = document.getElementById('notes').value
+      addRow('POTENTIAL LIMITED FORMAL SCHOOLING PROFILE', limited? (checkboxMark(limited==='Yes')+' Yes') : '', 'NOTES', notes || '')
 
-      const no=document.createElement('tr')
-      no.innerHTML=`<td class="label-bold">NOTES</td><td colspan="3">${val('notes')}</td>`
-      t.appendChild(no)
+      // append table
+      final.appendChild(tbl)
 
-      // footer
-      const foot=document.createElement('tr')
-      foot.innerHTML=`<td class="label-bold">Rev. 2021</td><td colspan="3"></td>`
-      t.appendChild(foot)
+      // show final area and hide wizard
+      document.getElementById('wizardRoot').classList.add('hidden')
+      document.getElementById('finalWrap').classList.remove('hidden')
 
-      document.getElementById('previewArea').style.display='block'
-      window.scrollTo({top:document.getElementById('previewArea').offsetTop-20,behavior:'smooth'})
+      // pdf button logic
+      document.getElementById('pdfBtn').onclick = ()=>{
+        const opt = { margin:0.2, filename:'one-world-one-centre-intake.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in',format:'letter',orientation:'portrait'} }
+        html2pdf().set(opt).from(document.getElementById('finalArea')).save()
+      }
+
+      document.getElementById('editBtn').onclick = ()=>{
+        document.getElementById('wizardRoot').classList.remove('hidden')
+        document.getElementById('finalWrap').classList.add('hidden')
+        window.scrollTo({top:0,behavior:'smooth'})
+      }
     }
 
-    document.getElementById('generate').addEventListener('click',()=>{buildFinal(); showPreview()})
-    function showPreview(){
-      // hide wizard pages and show preview area
-      document.querySelectorAll('.page').forEach(p=>p.style.display='none')
-      document.getElementById('previewArea').style.display='block'
-      window.scrollTo({top:0,behavior:'smooth'})
-    }
-
-    document.getElementById('editBtn').addEventListener('click',()=>{
-      // hide preview and return to page 1 (or keep on last)
-      document.getElementById('previewArea').style.display='none'
-      document.querySelectorAll('.page').forEach(p=>p.style.display='block')
-      show('1')
-    })
-
-    // ensure only one of gender checkboxes per student
-    function oneOf(a,b){
-      const elA=document.getElementById(a), elB=document.getElementById(b)
-      if(!elA||!elB) return
-      elA.addEventListener('change',()=>{ if(elA.checked) elB.checked=false })
-      elB.addEventListener('change',()=>{ if(elB.checked) elA.checked=false })
-    }
-    oneOf('s1_f','s1_m'); oneOf('s2_f','s2_m'); oneOf('s3_f','s3_m')
-
-    // also ensure mutual exclusivity for program yes/no per student
-    function progToggle(no,yes){ const a=document.getElementById(no), b=document.getElementById(yes); if(!a||!b) return; a.addEventListener('change',()=>{ if(a.checked) b.checked=false }); b.addEventListener('change',()=>{ if(b.checked) a.checked=false }) }
-    progToggle('s1_prog_no','s1_prog_yes'); progToggle('s2_prog_no','s2_prog_yes'); progToggle('s3_prog_no','s3_prog_yes')
-
-    // mutually exclusive for catholic and previous attendance
-    progToggle('cathNo','cathYes'); progToggle('prevNo','prevYes'); progToggle('limitedNo','limitedYes')
+    // Expose generate function for button
+    window.generateFinal = generateFinal
 
   </script>
 </body>
