@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Information Needed for Booking Appointments</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 10px;
+      background: #fffbea;
+    }
+    h2 {
+      text-align: center;
+      background: #f6e173;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #d4c54c;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      background: white;
+    }
+    .form-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fdfdf5;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row div {
+      flex: 1;
+    }
+    .checkbox-group {
+      margin-top: 6px;
+    }
+    .checkbox-group label {
+      font-weight: normal;
+      display: inline-block;
+      margin-right: 15px;
+    }
+    button {
+      padding: 12px 18px;
+      background: #2a7ae2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      display: block;
+      margin: 20px auto;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: white;
+        margin: 0;
+      }
+      h2 {
+        background: #f6e173 !important;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+        border: 1px solid #000;
+      }
+      .form-section {
+        border: 1px solid #000;
+        background: white !important;
+        margin-bottom: 15px;
+        page-break-inside: avoid;
+      }
+      input, textarea {
+        border: none;
+        border-bottom: 1px solid #000;
+        border-radius: 0;
+        padding: 4px;
+        background: none;
+      }
+      .checkbox-group input {
+        transform: scale(1.2);
+        margin-right: 6px;
+      }
+      button {
+        display: none; /* Hide button in print */
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>Information Needed for Booking Appointments</h2>
+
+  <form>
+    <!-- (full form sections here, same as last version) -->
+
+    <button type="button" onclick="window.print()">Save / Print as PDF</button>
+  </form>
+</body>
+</html>
