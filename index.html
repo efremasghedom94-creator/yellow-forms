@@ -1,871 +1,245 @@
-<!doctype html> 
-
-<html lang="en"> 
-
-<head> 
-
-  <meta charset="utf-8" /> 
-
-  <meta name="viewport" content="width=device-width,initial-scale=1" /> 
-
-  <title>One World One Centre — Intake Wizard & Yellow Form</title> 
-
-  <script src="https://cdn.tailwindcss.com"></script> 
-
-  <!-- html2pdf for one-click PDF export --> 
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script> 
-
-  <style> 
-
-    /* small helpers */ 
-
-    .field-gap{gap:12px} 
-
-    .disabled-input{background:#f3f4f6;color:#6b7280} 
-
-    /* final yellow sheet styling */ 
-
-    .yellow-bg{background:#FFF9C4} 
-
-    .checkbox-box{display:inline-block;width:20px;height:20px;border:1px solid #111;text-align:center;line-height:18px;font-weight:700;margin-right:6px} 
-
-    .muted{color:#6b7280} 
-
-    @media print{ 
-
-      body{margin:0} 
-
-      .wizard{display:none} 
-
-      .final-wrap{display:block} 
-
-    } 
-
-  </style> 
-
-</head> 
-
-<body class="bg-gray-100 text-gray-800"> 
-
-  <div class="max-w-5xl mx-auto p-6"> 
-
-  
-
-    <div id="wizardRoot" class="wizard bg-white rounded-lg shadow p-6"> 
-
-      <h1 class="text-xl font-semibold mb-4">INFORMATION NEEDED FOR BOOKING APPOINTMENTS — Wizard</h1> 
-
-  
-
-      <!-- PAGE 1 --> 
-
-      <section class="page" data-step="1"> 
-
-        <h2 class="font-medium mb-3">Step 1 — Contact & Intake</h2> 
-
-        <div class="grid grid-cols-12 gap-3"> 
-
-          <div class="col-span-2"> 
-
-            <label class="block text-sm">DATE</label> 
-
-            <input id="date" type="date" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-          <div class="col-span-3"> 
-
-            <label class="block text-sm">TAKEN BY</label> 
-
-            <input id="takenBy" type="text" class="w-full border rounded p-2 mt-1" placeholder="Name" /> 
-
-          </div> 
-
-          <div class="col-span-4"> 
-
-            <label class="block text-sm">CONTACT NAME / SURNAME</label> 
-
-            <input id="contactName" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-          <div class="col-span-2"> 
-
-            <label class="block text-sm">CONTACT PHONE #</label> 
-
-            <input id="contactPhone" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-          <div class="col-span-1"> 
-
-            <label class="block text-sm">RELATION</label> 
-
-            <input id="contactRel" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-        </div> 
-
-  
-
-        <div class="flex justify-end mt-4"> 
-
-          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="goTo(2)">Next</button> 
-
-        </div> 
-
-      </section> 
-
-  
-
-      <!-- PAGE 2 --> 
-
-      <section class="page hidden" data-step="2"> 
-
-        <h2 class="font-medium mb-3">Step 2 — Immigration & Attendance</h2> 
-
-  
-
-        <div class="grid grid-cols-12 gap-3 mb-3"> 
-
-          <div class="col-span-6"> 
-
-            <label class="block text-sm">STUDENT'S STATUS</label> 
-
-            <div class="mt-1 flex flex-wrap gap-3 items-center"> 
-
-              <label class="inline-flex items-center"><input type="radio" name="studentStatus" value="PR" class="mr-2">PR</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="studentStatus" value="RC" class="mr-2">RC</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="studentStatus" value="SP" class="mr-2">SP</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="studentStatus" value="WP" class="mr-2">WP</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="studentStatus" value="Other" class="mr-2" onchange="toggleOtherField('studentStatusOther', this)">Other</label> 
-
-              <input id="studentStatusOther" type="text" class="hidden border rounded p-2" placeholder="Specify" /> 
-
-            </div> 
-
-          </div> 
-
-  
-
-          <div class="col-span-6"> 
-
-            <label class="block text-sm">IMMIGRATION DOCUMENT (OF NATURAL PARENT / GUARDIAN)</label> 
-
-            <div class="mt-1 flex flex-wrap gap-3 items-center"> 
-
-              <label class="inline-flex items-center"><input type="radio" name="immDoc" value="PR" class="mr-2">PR</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="immDoc" value="RC" class="mr-2">RC</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="immDoc" value="SP" class="mr-2">SP</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="immDoc" value="WP" class="mr-2">WP</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="immDoc" value="Other" class="mr-2" onchange="toggleOtherField('immDocOther', this)">Other</label> 
-
-              <input id="immDocOther" type="text" class="hidden border rounded p-2" placeholder="Specify" /> 
-
-            </div> 
-
-          </div> 
-
-  
-
-          <div class="col-span-4 mt-2"> 
-
-            <label class="block text-sm">EXPIRY DATE (RC / SP / WP)</label> 
-
-            <input id="expiry" type="date" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-  
-
-          <div class="col-span-8 mt-2"> 
-
-            <label class="block text-sm">PREVIOUS ATTENDANCE IN CANADIAN SCHOOLS?</label> 
-
-            <div class="mt-1 flex items-center gap-6"> 
-
-              <label class="inline-flex items-center"><input type="radio" name="prevAttend" value="No" onchange="toggleAttendance(false)" class="mr-2">No</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="prevAttend" value="Yes" onchange="toggleAttendance(true)" class="mr-2">Yes</label> 
-
-            </div> 
-
-            <input id="prevDetails" type="text" class="mt-2 w-full border rounded p-2 disabled-input" placeholder="If Yes: Where / Grade / For how long" disabled /> 
-
-          </div> 
-
-  
-
-          <div class="col-span-12 mt-2"> 
-
-            <label class="block text-sm">DATE STUDENT(S) LANDED IN CANADA</label> 
-
-            <input id="landed" type="date" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-        </div> 
-
-  
-
-        <div class="flex justify-between"> 
-
-          <button class="px-4 py-2 bg-gray-500 text-white rounded" onclick="goTo(1)">Back</button> 
-
-          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="goTo(3)">Next</button> 
-
-        </div> 
-
-      </section> 
-
-  
-
-      <!-- PAGE 3 Parents --> 
-
-      <section class="page hidden" data-step="3"> 
-
-        <h2 class="font-medium mb-3">Step 3 — Parent / Guardian</h2> 
-
-        <div class="grid grid-cols-12 gap-3"> 
-
-          <div class="col-span-3"> 
-
-            <label class="block text-sm">FATHER'S SURNAME</label> 
-
-            <input id="fatherSurname" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-          <div class="col-span-3"> 
-
-            <label class="block text-sm">FATHER'S GIVEN NAME</label> 
-
-            <input id="fatherGiven" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-          <div class="col-span-3"> 
-
-            <label class="block text-sm">MOTHER'S SURNAME</label> 
-
-            <input id="motherSurname" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-          <div class="col-span-3"> 
-
-            <label class="block text-sm">MOTHER'S GIVEN NAME</label> 
-
-            <input id="motherGiven" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-        </div> 
-
-        <div class="flex justify-between mt-4"> 
-
-          <button class="px-4 py-2 bg-gray-500 text-white rounded" onclick="goTo(2)">Back</button> 
-
-          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="goTo(4)">Next</button> 
-
-        </div> 
-
-      </section> 
-
-  
-
-      <!-- PAGE 4 Address & family --> 
-
-      <section class="page hidden" data-step="4"> 
-
-        <h2 class="font-medium mb-3">Step 4 — Address & Family</h2> 
-
-        <div class="grid grid-cols-12 gap-3"> 
-
-          <div class="col-span-2"> 
-
-            <label class="block text-sm">APARTMENT #</label> 
-
-            <input id="apt" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-          <div class="col-span-8"> 
-
-            <label class="block text-sm">FAMILY ADDRESS</label> 
-
-            <input id="address" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-          <div class="col-span-2"> 
-
-            <label class="block text-sm">POSTAL CODE</label> 
-
-            <input id="postal" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-  
-
-          <div class="col-span-4 mt-2"> 
-
-            <label class="block text-sm">FAMILY PHONE #</label> 
-
-            <input id="familyPhone" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-          <div class="col-span-4 mt-2"> 
-
-            <label class="block text-sm">HOME LANGUAGE</label> 
-
-            <input id="homeLang" type="text" class="w-full border rounded p-2 mt-1" /> 
-
-          </div> 
-
-          <div class="col-span-4 mt-2"> 
-
-            <label class="block text-sm">CATHOLIC</label> 
-
-            <div class="mt-1 flex items-center gap-6"> 
-
-              <label class="inline-flex items-center"><input type="radio" name="catholic" value="No" class="mr-2">No</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="catholic" value="Yes" class="mr-2">Yes</label> 
-
-            </div> 
-
-          </div> 
-
-        </div> 
-
-  
-
-        <div class="flex justify-between mt-4"> 
-
-          <button class="px-4 py-2 bg-gray-500 text-white rounded" onclick="goTo(3)">Back</button> 
-
-          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="goTo(5)">Next</button> 
-
-        </div> 
-
-      </section> 
-
-  
-
-      <!-- PAGE 5 Students (dynamic add) --> 
-
-      <section class="page hidden" data-step="5"> 
-
-        <h2 class="font-medium mb-3">Step 5 — Student Details (Add as many as needed)</h2> 
-
-        <div id="studentsContainer" class="space-y-4"> 
-
-          <!-- template inserted by JS --> 
-
-        </div> 
-
-        <div class="flex items-center gap-3 mt-3"> 
-
-          <button class="px-3 py-2 bg-blue-600 text-white rounded" onclick="addStudent()" type="button">Add Student</button> 
-
-          <button class="px-3 py-2 bg-red-500 text-white rounded" onclick="removeStudent()" type="button">Remove Last</button> 
-
-        </div> 
-
-  
-
-        <div class="flex justify-between mt-4"> 
-
-          <button class="px-4 py-2 bg-gray-500 text-white rounded" onclick="goTo(4)">Back</button> 
-
-          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="goTo(6)">Next</button> 
-
-        </div> 
-
-      </section> 
-
-  
-
-      <!-- PAGE 6 Schooling profile & notes --> 
-
-      <section class="page hidden" data-step="6"> 
-
-        <h2 class="font-medium mb-3">Step 6 — Schooling Profile & Notes</h2> 
-
-        <div class="grid grid-cols-12 gap-3"> 
-
-          <div class="col-span-4"> 
-
-            <label class="block text-sm">POTENTIAL LIMITED FORMAL SCHOOLING PROFILE</label> 
-
-            <div class="mt-1 flex items-center gap-6"> 
-
-              <label class="inline-flex items-center"><input type="radio" name="limitedProfile" value="No">No</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="limitedProfile" value="Yes">Yes</label> 
-
-            </div> 
-
-          </div> 
-
-          <div class="col-span-8"> 
-
-            <label class="block text-sm">DETAILS (Number of years as refugees, country of relocation, refugee camp name, nature of schooling, parent country of origin)</label> 
-
-            <textarea id="notes" class="w-full border rounded p-2 mt-1" placeholder="Describe if relevant"></textarea> 
-
-          </div> 
-
-        </div> 
-
-  
-
-        <div class="flex justify-between mt-4"> 
-
-          <button class="px-4 py-2 bg-gray-500 text-white rounded" onclick="goTo(5)">Back</button> 
-
-          <button class="px-4 py-2 bg-green-700 text-white rounded" onclick="generateFinal()">Generate Yellow Form</button> 
-
-        </div> 
-
-      </section> 
-
-  
-
-    </div> 
-
-  
-
-    <!-- FINAL STATIC YELLOW FORM --> 
-
-    <div id="finalWrap" class="final-wrap hidden mt-6"> 
-
-      <div id="finalArea" class="yellow-bg p-6 rounded shadow border"> 
-
-        <!-- content injected here --> 
-
-      </div> 
-
-  
-
-      <div class="mt-4 flex gap-3"> 
-
-        <button id="printBtn" class="px-4 py-2 bg-blue-600 text-white rounded" onclick="window.print()">Print</button> 
-
-        <button id="pdfBtn" class="px-4 py-2 bg-indigo-600 text-white rounded">Download PDF</button> 
-
-        <button id="editBtn" class="px-4 py-2 bg-gray-500 text-white rounded">Back to Edit</button> 
-
-      </div> 
-
-    </div> 
-
-  
-
-  </div> 
-
-  
-
-  <script> 
-
-    // --- Wizard navigation --- 
-
-    function goTo(step){ 
-
-      document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden')) 
-
-      const target = document.querySelector(`.page[data-step='${step}']`) 
-
-      if(target) target.classList.remove('hidden') 
-
-      window.scrollTo({top:0,behavior:'smooth'}) 
-
-    } 
-
-  
-
-    // --- toggle Other text fields for radio groups --- 
-
-    function toggleOtherField(id, el){ 
-
-      const inp = document.getElementById(id) 
-
-      if(el.value === 'Other' && el.checked){ inp.classList.remove('hidden'); inp.focus() } else { inp.classList.add('hidden'); inp.value = '' } 
-
-    } 
-
-  
-
-    // --- Attendance enabling/disabling --- 
-
-    function toggleAttendance(isYes){ 
-
-      const d = document.getElementById('prevDetails') 
-
-      if(isYes){ d.disabled = false; d.classList.remove('disabled-input') } else { d.disabled = true; d.classList.add('disabled-input'); d.value = '' } 
-
-    } 
-
-  
-
-    // --- Dynamic students --- 
-
-    let studentCount = 0 
-
-    function addStudent(prefill){ 
-
-      studentCount++ 
-
-      const id = studentCount 
-
-      const container = document.getElementById('studentsContainer') 
-
-      const wrap = document.createElement('div') 
-
-      wrap.className = 'p-4 border rounded bg-gray-50' 
-
-      wrap.id = `student-${id}` 
-
-      wrap.innerHTML = ` 
-
-        <div class="grid grid-cols-12 gap-3"> 
-
-          <div class="col-span-3"> 
-
-            <label class="text-sm">STUDENT'S SURNAME</label> 
-
-            <input type="text" id="s_${id}_surname" class="w-full border rounded p-2 mt-1" value="${prefill?.surname||''}" /> 
-
-          </div> 
-
-          <div class="col-span-3"> 
-
-            <label class="text-sm">STUDENT'S GIVEN NAME</label> 
-
-            <input type="text" id="s_${id}_given" class="w-full border rounded p-2 mt-1" value="${prefill?.given||''}" /> 
-
-          </div> 
-
-          <div class="col-span-2"> 
-
-            <label class="text-sm">GENDER</label> 
-
-            <div class="mt-1 flex items-center gap-3"> 
-
-              <label class="inline-flex items-center"><input type="radio" name="s_${id}_gender" value="F" class="mr-2">F</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="s_${id}_gender" value="M" class="mr-2">M</label> 
-
-            </div> 
-
-          </div> 
-
-          <div class="col-span-2"> 
-
-            <label class="text-sm">DOB</label> 
-
-            <input type="date" id="s_${id}_dob" class="w-full border rounded p-2 mt-1" value="${prefill?.dob||''}" /> 
-
-          </div> 
-
-          <div class="col-span-2"> 
-
-            <label class="text-sm">BIRTH COUNTRY</label> 
-
-            <input type="text" id="s_${id}_birth" class="w-full border rounded p-2 mt-1" value="${prefill?.birth||''}" /> 
-
-          </div> 
-
-  
-
-          <div class="col-span-4 mt-2"> 
-
-            <label class="text-sm">LAST GRADE COMPLETED</label> 
-
-            <input type="text" id="s_${id}_lastgrade" class="w-full border rounded p-2 mt-1" value="${prefill?.lastgrade||''}" /> 
-
-          </div> 
-
-          <div class="col-span-4 mt-2"> 
-
-            <label class="text-sm">SCHOOL YEAR</label> 
-
-            <div class="mt-1 flex items-center gap-3"> 
-
-              <label class="inline-flex items-center"><input type="radio" name="s_${id}_year" value="ThisYear" class="mr-2">This year</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="s_${id}_year" value="NextYear" class="mr-2">Next year</label> 
-
-            </div> 
-
-          </div> 
-
-          <div class="col-span-4 mt-2"> 
-
-            <label class="text-sm">PROGRAM</label> 
-
-            <div class="mt-1 flex items-center gap-3"> 
-
-              <label class="inline-flex items-center"><input type="radio" name="s_${id}_prog" value="No" class="mr-2">No</label> 
-
-              <label class="inline-flex items-center"><input type="radio" name="s_${id}_prog" value="Yes" class="mr-2">Yes</label> 
-
-              <input type="text" id="s_${id}_prog_spec" class="border rounded p-2 ml-2" placeholder="Specify (if Yes)" /> 
-
-            </div> 
-
-          </div> 
-
-        </div> 
-
-      ` 
-
-      container.appendChild(wrap) 
-
-      window.scrollTo({top:wrap.offsetTop-60, behavior:'smooth'}) 
-
-    } 
-
-    function removeStudent(){ if(studentCount===0) return; const el=document.getElementById(`student-${studentCount}`); if(el) el.remove(); studentCount-- } 
-
-  
-
-    // start with 1 student by default 
-
-    addStudent() 
-
-  
-
-    // --- Build final static yellow form --- 
-
-    function checkboxMark(cond){ return cond ? '☑' : '☐' } 
-
-  
-
-    function getRadioValue(name){ const r=document.querySelector(`input[name='${name}']:checked`); return r? r.value : '' } 
-
-  
-
-    function generateFinal(){ 
-
-      const final = document.getElementById('finalArea') 
-
-      final.innerHTML = '' 
-
-  
-
-      // Top table following order/labels 
-
-      const tbl = document.createElement('table') 
-
-      tbl.className = 'w-full border-collapse' 
-
-  
-
-      function addRow(label, col1, label2, col2, mutedCol1){ 
-
-        const tr = document.createElement('tr') 
-
-        tr.innerHTML = ` 
-
-          <td class="p-2 border font-semibold w-40">${label}</td> 
-
-          <td class="p-2 border ${mutedCol1? 'muted':''}">${col1||''}</td> 
-
-          <td class="p-2 border font-semibold w-40">${label2||''}</td> 
-
-          <td class="p-2 border">${col2||''}</td> 
-
-        ` 
-
-        tbl.appendChild(tr) 
-
-      } 
-
-  
-
-      addRow('DATE', document.getElementById('date').value, 'TAKEN BY', document.getElementById('takenBy').value) 
-
-      addRow('CONTACT NAME/SURNAME', document.getElementById('contactName').value, 'CONTACT PHONE #', document.getElementById('contactPhone').value) 
-
-      addRow('CONTACT RELATIONSHIP', document.getElementById('contactRel').value, '', '') 
-
-  
-
-      // immigration row (student status with radio + other) 
-
-      const sStatus = getRadioValue('studentStatus') 
-
-      const sStatusOther = document.getElementById('studentStatusOther').value 
-
-      const imm = getRadioValue('immDoc') 
-
-      const immOther = document.getElementById('immDocOther').value 
-
-      const statusText = sStatus === 'Other' ? sStatusOther : (sStatus || '') 
-
-      const immText = imm === 'Other' ? immOther : (imm || '') 
-
-      addRow("STUDENT'S STATUS", statusText, 'IMMIGRATION DOCUMENT (OF NATURAL PARENT/GUARDIAN)', immText) 
-
-  
-
-      addRow('EXPIRY DATE (RC/SP/WP)', document.getElementById('expiry').value, 'PREVIOUS ATTENDANCE IN CANADIAN SCHOOLS?', (function(){ 
-
-        const val = getRadioValue('prevAttend') 
-
-        if(val==='Yes') return checkboxMark(true)+' Yes' 
-
-        if(val==='No') return checkboxMark(true)+' No' 
-
-        return '' 
-
-      })()) 
-
-  
-
-      // prev details — gray out if disabled (No) 
-
-      const prevDetails = document.getElementById('prevDetails') 
-
-      const prevShown = prevDetails.value 
-
-      const prevMuted = prevDetails.disabled 
-
-      addRow('DATE STUDENT(S) LANDED IN CANADA', document.getElementById('landed').value, 'PREVIOUS DETAILS', `<span class="${prevMuted? 'muted':''}">${prevShown|| (prevMuted? '—':'' )}</span>`, prevMuted) 
-
-  
-
-      addRow("FATHER'S SURNAME", document.getElementById('fatherSurname').value, "FATHER'S GIVEN NAME", document.getElementById('fatherGiven').value) 
-
-      addRow("MOTHER'S SURNAME", document.getElementById('motherSurname').value, "MOTHER'S GIVEN NAME", document.getElementById('motherGiven').value) 
-
-  
-
-      addRow('APARTMENT #', document.getElementById('apt').value, 'FAMILY ADDRESS', document.getElementById('address').value + (document.getElementById('postal').value? ' / '+document.getElementById('postal').value : '')) 
-
-      addRow('FAMILY PHONE #', document.getElementById('familyPhone').value, 'HOME LANGUAGE', document.getElementById('homeLang').value + '  ' + (function(){ const c=getRadioValue('catholic'); return c? (checkboxMark(c==='Yes')+' Yes   '+checkboxMark(c==='No')+' No') : '' })()) 
-
-  
-
-      // students 
-
-      const header = document.createElement('tr') 
-
-      header.innerHTML = `<td class="p-2 border font-semibold">STUDENT(S)</td><td class="p-2 border" colspan="3"></td>` 
-
-      tbl.appendChild(header) 
-
-  
-
-      for(let i=1;i<=studentCount;i++){ 
-
-        const surname = document.getElementById(`s_${i}_surname`)?.value || '' 
-
-        const given = document.getElementById(`s_${i}_given`)?.value || '' 
-
-        const gender = (function(){ const g = document.querySelector(`input[name='s_${i}_gender']:checked`); return g? g.value : '' })() 
-
-        const dob = document.getElementById(`s_${i}_dob`)?.value || '' 
-
-        const birth = document.getElementById(`s_${i}_birth`)?.value || '' 
-
-        const last = document.getElementById(`s_${i}_lastgrade`)?.value || '' 
-
-        const year = (function(){ const y = document.querySelector(`input[name='s_${i}_year']:checked`); return y? y.value : '' })() 
-
-        const prog = (function(){ const p = document.querySelector(`input[name='s_${i}_prog']:checked`); return p? p.value : '' })() 
-
-        const progSpec = document.getElementById(`s_${i}_prog_spec`)?.value || '' 
-
-  
-
-        if(surname || given || birth || last){ 
-
-          addRow("STUDENT'S SURNAME", surname, "STUDENT'S GIVEN NAME", given) 
-
-          addRow('GENDER / DOB', `${checkboxMark(gender==='F')} F ${checkboxMark(gender==='M')} M  / ${dob}`, 'BIRTH COUNTRY', birth) 
-
-          addRow('LAST GRADE COMPLETED', last, 'SCHOOL YEAR / PROGRAM', `${year? year.replace('ThisYear','This year').replace('NextYear','Next year') : ''} / ${prog? (prog + (progSpec? ' — '+progSpec:'')) : ''}`) 
-
-        } 
-
-      } 
-
-  
-
-      // limited & notes 
-
-      const limited = getRadioValue('limitedProfile') 
-
-      const notes = document.getElementById('notes').value 
-
-      addRow('POTENTIAL LIMITED FORMAL SCHOOLING PROFILE', limited? (checkboxMark(limited==='Yes')+' Yes') : '', 'NOTES', notes || '') 
-
-  
-
-      // append table 
-
-      final.appendChild(tbl) 
-
-  
-
-      // show final area and hide wizard 
-
-      document.getElementById('wizardRoot').classList.add('hidden') 
-
-      document.getElementById('finalWrap').classList.remove('hidden') 
-
-  
-
-      // pdf button logic 
-
-      document.getElementById('pdfBtn').onclick = ()=>{ 
-
-        const opt = { margin:0.2, filename:'one-world-one-centre-intake.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in',format:'letter',orientation:'portrait'} } 
-
-        html2pdf().set(opt).from(document.getElementById('finalArea')).save() 
-
-      } 
-
-  
-
-      document.getElementById('editBtn').onclick = ()=>{ 
-
-        document.getElementById('wizardRoot').classList.remove('hidden') 
-
-        document.getElementById('finalWrap').classList.add('hidden') 
-
-        window.scrollTo({top:0,behavior:'smooth'}) 
-
-      } 
-
-    } 
-
-  
-
-    // Expose generate function for button 
-
-    window.generateFinal = generateFinal 
-
-  
-
-  </script> 
-
-</body> 
-
-</html> 
-
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Information Needed for Booking Appointments</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f9f9f9;
+    }
+    .form-container {
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #333;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    td, th {
+      border: 1px solid #333;
+      padding: 6px;
+      vertical-align: top;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    input[type="text"], input[type="date"], input[type="tel"], select {
+      width: 100%;
+      padding: 4px;
+      font-size: 14px;
+    }
+    .checkbox-group, .radio-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .notes {
+      border: 1px solid #333;
+      padding: 10px;
+      min-height: 60px;
+    }
+    .footer {
+      margin-top: 10px;
+      font-size: 12px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Information Needed for Booking Appointments</h2>
+
+    <table>
+      <tr>
+        <td><label>Date</label><input type="date"></td>
+        <td><label>Taken By</label><input type="text"></td>
+        <td><label>Contact Name/Surname</label><input type="text"></td>
+        <td><label>Contact Phone #</label><input type="tel"></td>
+        <td><label>Contact Relationship</label><input type="text"></td>
+      </tr>
+    </table>
+
+    <table>
+      <tr>
+        <td>
+          <label>Student’s Status</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox"> PR</label>
+            <label><input type="checkbox"> RC</label>
+            <label><input type="checkbox"> SP</label>
+            <label><input type="checkbox"> WP</label>
+          </div>
+        </td>
+        <td><label>Immigration Document (of Natural Parent/Guardian)</label><input type="text"></td>
+        <td><label>Expiry Date (RC/SP/WP)</label><input type="date"></td>
+        <td>
+          <label>Previous Attendance in Canadian Schools?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="attendance"> No</label>
+            <label><input type="radio" name="attendance"> Yes</label>
+          </div>
+          <input type="text" placeholder="Where/Grade/For how long">
+        </td>
+        <td><label>Date Student(s) Landed in Canada</label><input type="date"></td>
+      </tr>
+    </table>
+
+    <table>
+      <tr>
+        <td><label>Father’s Surname</label><input type="text"></td>
+        <td><label>Father’s Given Name</label><input type="text"></td>
+        <td><label>Mother’s Surname</label><input type="text"></td>
+        <td><label>Mother’s Given Name</label><input type="text"></td>
+      </tr>
+    </table>
+
+    <table>
+      <tr>
+        <td><label>Apartment #</label><input type="text"></td>
+        <td><label>Family Address</label><input type="text"></td>
+        <td><label>Postal Code</label><input type="text"></td>
+      </tr>
+      <tr>
+        <td><label>Family Phone #</label><input type="tel"></td>
+        <td><label>Home Language</label><input type="text"></td>
+        <td>
+          <label>Catholic</label>
+          <div class="radio-group">
+            <label><input type="radio" name="catholic"> No</label>
+            <label><input type="radio" name="catholic"> Yes</label>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Students Table -->
+    <table>
+      <tr>
+        <th>Student’s Surname</th>
+        <th>Student’s Given Name</th>
+        <th>Gender</th>
+        <th>DOB</th>
+        <th>Birth Country</th>
+        <th>Last Grade Completed</th>
+        <th>School Year</th>
+        <th>Program</th>
+      </tr>
+      <tr>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td>
+          <div class="radio-group">
+            <label><input type="radio" name="g1"> F</label>
+            <label><input type="radio" name="g1"> M</label>
+          </div>
+        </td>
+        <td><input type="date"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td>
+          <div class="radio-group">
+            <label><input type="radio" name="sy1"> This Year</label>
+            <label><input type="radio" name="sy1"> Next Year</label>
+          </div>
+        </td>
+        <td>
+          <div class="radio-group">
+            <label><input type="radio" name="p1"> No</label>
+            <label><input type="radio" name="p1"> Yes</label>
+          </div>
+          <input type="text" placeholder="Specify">
+        </td>
+      </tr>
+      <!-- Duplicate rows for more students -->
+      <tr>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td>
+          <div class="radio-group">
+            <label><input type="radio" name="g2"> F</label>
+            <label><input type="radio" name="g2"> M</label>
+          </div>
+        </td>
+        <td><input type="date"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td>
+          <div class="radio-group">
+            <label><input type="radio" name="sy2"> This Year</label>
+            <label><input type="radio" name="sy2"> Next Year</label>
+          </div>
+        </td>
+        <td>
+          <div class="radio-group">
+            <label><input type="radio" name="p2"> No</label>
+            <label><input type="radio" name="p2"> Yes</label>
+          </div>
+          <input type="text" placeholder="Specify">
+        </td>
+      </tr>
+      <tr>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td>
+          <div class="radio-group">
+            <label><input type="radio" name="g3"> F</label>
+            <label><input type="radio" name="g3"> M</label>
+          </div>
+        </td>
+        <td><input type="date"></td>
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td>
+          <div class="radio-group">
+            <label><input type="radio" name="sy3"> This Year</label>
+            <label><input type="radio" name="sy3"> Next Year</label>
+          </div>
+        </td>
+        <td>
+          <div class="radio-group">
+            <label><input type="radio" name="p3"> No</label>
+            <label><input type="radio" name="p3"> Yes</label>
+          </div>
+          <input type="text" placeholder="Specify">
+        </td>
+      </tr>
+    </table>
+
+    <table>
+      <tr>
+        <td>
+          <label>Potential Limited Formal Schooling Profile</label>
+          <div class="radio-group">
+            <label><input type="radio" name="limited"> No</label>
+            <label><input type="radio" name="limited"> Yes</label>
+          </div>
+          <small>If YES, describe for each student (Grade 1 – Grade 12).</small>
+        </td>
+      </tr>
+    </table>
+
+    <div class="notes" contenteditable="true">
+      Notes: Click here to type...
+    </div>
+
+    <div class="footer">
+      Rev. 2021
+    </div>
+  </div>
+</body>
+</html>
