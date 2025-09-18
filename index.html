@@ -1,103 +1,327 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Appointment Booking Form</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>One World One Centre — Intake Form (Fill & Generate)</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #fffbea;
-      margin: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #444;
-    }
-    form {
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border: 2px solid #f4d03f;
-      border-radius: 8px;
-    }
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: bold;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .row {
-      display: flex;
-      gap: 20px;
-    }
-    .row > div {
-      flex: 1;
-    }
-    button {
-      display: block;
-      margin: 20px auto;
-      padding: 10px 20px;
-      background: #f4d03f;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #d4ac0d;
+    :root{--paper-width:1100px;--pad:12px;--label-w:170px}
+    body{font-family: Arial, Helvetica, sans-serif; background:#f3f4f6; margin:24px;}
+    h1{font-size:18px;margin-bottom:8px}
+    .container{max-width:var(--paper-width);margin:0 auto}
+    form{background:white;border:1px solid #d1d5db;padding:16px;border-radius:6px}
+    .row{display:flex;gap:12px;margin-bottom:8px}
+    .col{flex:1;min-width:120px}
+    label{display:block;font-size:12px;color:#374151;margin-bottom:4px}
+    input[type=text], input[type=date], select{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:4px}
+    .checkbox-row{display:flex;gap:10px;align-items:center}
+    .students{border-top:1px dashed #e5e7eb;padding-top:10px;margin-top:10px}
+    button{background:#0f5132;color:white;padding:10px 14px;border:0;border-radius:6px;cursor:pointer}
+    button.secondary{background:#475569}
+
+    /* Preview (yellow paper) */
+    .preview{display:none;margin-top:16px}
+    .paper{background:#FFF9C4;border:2px solid #e6d97a;padding:18px;border-radius:4px}
+    .paper h2{margin:0 0 8px 0}
+    table.form{width:100%;border-collapse:collapse;font-size:13px}
+    table.form td, table.form th{border:1px solid rgba(0,0,0,0.08);padding:8px;vertical-align:top}
+    .field-label{font-weight:700;font-size:11px;color:#263238}
+    .no-border{border:0}
+    .inline-small{display:inline-block;min-width:36px}
+    .actions{margin-top:12px}
+
+    @media print{
+      body{background:white}
+      .preview{display:block}
     }
   </style>
 </head>
 <body>
-  <h1>Information Needed for Booking the Appointment</h1>
+  <div class="container">
+    <h1>INFORMATION NEEDED FOR BOOKING APPOINTMENTS — Fill & Generate Yellow Form</h1>
+    <form id="intakeForm" onsubmit="return false">
 
-  <form id="appointmentForm">
-    <label>Full Name:</label>
-    <input type="text" name="fullname" required>
-
-    <div class="row">
-      <div>
-        <label>Date of Birth:</label>
-        <input type="date" name="dob" required>
+      <div class="row">
+        <div class="col"><label>DATE</label><input type="date" id="date"/></div>
+        <div class="col"><label>TAKEN BY</label><input type="text" id="takenBy" placeholder="Name"/></div>
+        <div class="col"><label>CONTACT NAME/SURNAME</label><input type="text" id="contactName"/></div>
+        <div class="col"><label>CONTACT PHONE #</label><input type="text" id="contactPhone"/></div>
+        <div class="col"><label>CONTACT RELATIONSHIP</label><input type="text" id="contactRel"/></div>
       </div>
-      <div>
-        <label>Phone Number:</label>
-        <input type="tel" name="phone" required>
+
+      <div class="row">
+        <div class="col"><label>STUDENT'S STATUS</label><input type="text" id="studentStatus"/></div>
+        <div class="col"><label>IMMIGRATION DOCUMENT (NATURAL PARENT/GUARDIAN)</label>
+          <div class="checkbox-row">
+            <label><input type="checkbox" id="docPR"/> PR</label>
+            <label><input type="checkbox" id="docRC"/> RC</label>
+            <label><input type="checkbox" id="docSP"/> SP</label>
+            <label><input type="checkbox" id="docWP"/> WP</label>
+          </div>
+        </div>
+        <div class="col"><label>EXPIRY DATE (RC/SP/WP)</label><input type="date" id="expiry"/></div>
+        <div class="col"><label>PREVIOUS ATTENDANCE IN CANADIAN SCHOOLS?</label>
+          <div class="checkbox-row"><label><input type="checkbox" id="prevNo"/> NO</label><label><input type="checkbox" id="prevYes"/> YES</label></div>
+        </div>
+        <div class="col"><label>DATE STUDENT(S) LANDED IN CANADA</label><input type="date" id="landed"/></div>
+      </div>
+
+      <div class="row">
+        <div class="col"><label>FATHER'S SURNAME</label><input type="text" id="fatherSurname"/></div>
+        <div class="col"><label>FATHER'S GIVEN NAME</label><input type="text" id="fatherGiven"/></div>
+        <div class="col"><label>MOTHER'S SURNAME</label><input type="text" id="motherSurname"/></div>
+        <div class="col"><label>MOTHER'S GIVEN NAME</label><input type="text" id="motherGiven"/></div>
+      </div>
+
+      <div class="row">
+        <div class="col"><label>APARTMENT #</label><input type="text" id="apt"/></div>
+        <div class="col" style="flex:2"><label>FAMILY ADDRESS</label><input type="text" id="address"/></div>
+        <div class="col"><label>POSTAL CODE</label><input type="text" id="postal"/></div>
+      </div>
+
+      <div class="row">
+        <div class="col"><label>FAMILY PHONE #</label><input type="text" id="familyPhone"/></div>
+        <div class="col"><label>HOME LANGUAGE</label><input type="text" id="homeLang"/></div>
+        <div class="col"><label>CATHOLIC</label>
+          <div class="checkbox-row"><label><input type="checkbox" id="cathNo"/> NO</label><label><input type="checkbox" id="cathYes"/> YES</label></div>
+        </div>
+      </div>
+
+      <div class="students">
+        <h3>Student(s)</h3>
+        <div id="studentsContainer">
+          <!-- three student rows matching the original -->
+          <div class="studentRow" style="margin-bottom:8px">
+            <div class="row">
+              <div class="col"><label>STUDENT'S SURNAME</label><input type="text" class="stu-surname"/></div>
+              <div class="col"><label>STUDENT'S GIVEN NAME</label><input type="text" class="stu-given"/></div>
+              <div class="col"><label>GENDER</label><div class="checkbox-row"><label><input type="checkbox" class="stu-f"/> F</label><label><input type="checkbox" class="stu-m"/> M</label></div></div>
+              <div class="col"><label>DOB (MMM/DD/YYYY)</label><input type="date" class="stu-dob"/></div>
+              <div class="col"><label>BIRTH COUNTRY</label><input type="text" class="stu-birth"/></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>LAST GRADE COMPLETED</label><input type="text" class="stu-lastgrade"/></div>
+              <div class="col"><label>SCHOOL YEAR</label><div class="checkbox-row"><label><input type="checkbox" class="stu-thisyear"/> THIS YEAR</label><label><input type="checkbox" class="stu-nextyear"/> NEXT YEAR</label></div></div>
+              <div class="col"><label>PROGRAM</label><div class="checkbox-row"><label><input type="checkbox" class="stu-prog-no"/> NO</label><label><input type="checkbox" class="stu-prog-yes"/> YES</label></div><input type="text" class="stu-prog-spec" placeholder="Specify" style="margin-top:6px"/></div>
+            </div>
+          </div>
+
+          <!-- copy two more -->
+          <div class="studentRow" style="margin-bottom:8px"> <!-- student 2 -->
+            <div class="row">
+              <div class="col"><label>STUDENT'S SURNAME</label><input type="text" class="stu-surname"/></div>
+              <div class="col"><label>STUDENT'S GIVEN NAME</label><input type="text" class="stu-given"/></div>
+              <div class="col"><label>GENDER</label><div class="checkbox-row"><label><input type="checkbox" class="stu-f"/> F</label><label><input type="checkbox" class="stu-m"/> M</label></div></div>
+              <div class="col"><label>DOB (MMM/DD/YYYY)</label><input type="date" class="stu-dob"/></div>
+              <div class="col"><label>BIRTH COUNTRY</label><input type="text" class="stu-birth"/></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>LAST GRADE COMPLETED</label><input type="text" class="stu-lastgrade"/></div>
+              <div class="col"><label>SCHOOL YEAR</label><div class="checkbox-row"><label><input type="checkbox" class="stu-thisyear"/> THIS YEAR</label><label><input type="checkbox" class="stu-nextyear"/> NEXT YEAR</label></div></div>
+              <div class="col"><label>PROGRAM</label><div class="checkbox-row"><label><input type="checkbox" class="stu-prog-no"/> NO</label><label><input type="checkbox" class="stu-prog-yes"/> YES</label></div><input type="text" class="stu-prog-spec" placeholder="Specify" style="margin-top:6px"/></div>
+            </div>
+          </div>
+
+          <div class="studentRow" style="margin-bottom:8px"> <!-- student 3 -->
+            <div class="row">
+              <div class="col"><label>STUDENT'S SURNAME</label><input type="text" class="stu-surname"/></div>
+              <div class="col"><label>STUDENT'S GIVEN NAME</label><input type="text" class="stu-given"/></div>
+              <div class="col"><label>GENDER</label><div class="checkbox-row"><label><input type="checkbox" class="stu-f"/> F</label><label><input type="checkbox" class="stu-m"/> M</label></div></div>
+              <div class="col"><label>DOB (MMM/DD/YYYY)</label><input type="date" class="stu-dob"/></div>
+              <div class="col"><label>BIRTH COUNTRY</label><input type="text" class="stu-birth"/></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>LAST GRADE COMPLETED</label><input type="text" class="stu-lastgrade"/></div>
+              <div class="col"><label>SCHOOL YEAR</label><div class="checkbox-row"><label><input type="checkbox" class="stu-thisyear"/> THIS YEAR</label><label><input type="checkbox" class="stu-nextyear"/> NEXT YEAR</label></div></div>
+              <div class="col"><label>PROGRAM</label><div class="checkbox-row"><label><input type="checkbox" class="stu-prog-no"/> NO</label><label><input type="checkbox" class="stu-prog-yes"/> YES</label></div><input type="text" class="stu-prog-spec" placeholder="Specify" style="margin-top:6px"/></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div style="margin-top:10px">
+        <label>POTENTIAL LIMITED FORMAL SCHOOLING PROFILE</label>
+        <div class="checkbox-row"><label><input type="checkbox" id="limitedNo"/> NO</label><label><input type="checkbox" id="limitedYes"/> YES</label></div>
+        <label>NOTES</label>
+        <textarea id="notes" style="width:100%;min-height:80px;padding:8px;border:1px solid #cbd5e1;border-radius:4px"></textarea>
+      </div>
+
+      <div class="actions">
+        <button id="generateBtn">Generate Yellow Form</button>
+        <button class="secondary" id="clearBtn" type="button">Clear</button>
+      </div>
+
+    </form>
+
+    <div class="preview" id="previewArea">
+      <div class="paper" id="paper">
+        <h2>INFORMATION NEEDED FOR BOOKING APPOINTMENTS</h2>
+        <table class="form">
+          <tbody id="paperBody">
+            <!-- filled content will be injected here -->
+          </tbody>
+        </table>
+        <div style="margin-top:8px">
+          <button onclick="window.print()">Print / Save as PDF</button>
+        </div>
       </div>
     </div>
 
-    <label>Email Address:</label>
-    <input type="email" name="email" required>
-
-    <label>Preferred Appointment Date:</label>
-    <input type="date" name="appt_date" required>
-
-    <label>Preferred Time:</label>
-    <select name="appt_time" required>
-      <option value="">--Select--</option>
-      <option>Morning</option>
-      <option>Afternoon</option>
-      <option>Evening</option>
-    </select>
-
-    <label>Reason for Appointment:</label>
-    <textarea name="reason" rows="4"></textarea>
-
-    <button type="button" onclick="savePDF()">Save/Print</button>
-  </form>
+  </div>
 
   <script>
-    function savePDF() {
-      window.print(); // This opens the print dialog (you can choose "Save as PDF")
+    function getVal(id){const el=document.getElementById(id);return el?el.value.replace(/\s+/g,' '):''}
+    function isChecked(id){const el=document.getElementById(id);return el?el.checked:false}
+
+    function gather(){
+      const data={}
+      data.date=getVal('date')
+      data.takenBy=getVal('takenBy')
+      data.contactName=getVal('contactName')
+      data.contactPhone=getVal('contactPhone')
+      data.contactRel=getVal('contactRel')
+
+      data.studentStatus=getVal('studentStatus')
+      data.docPR=isChecked('docPR')
+      data.docRC=isChecked('docRC')
+      data.docSP=isChecked('docSP')
+      data.docWP=isChecked('docWP')
+      data.expiry=getVal('expiry')
+      data.prevNo=isChecked('prevNo')
+      data.prevYes=isChecked('prevYes')
+      data.landed=getVal('landed')
+
+      data.fatherSurname=getVal('fatherSurname')
+      data.fatherGiven=getVal('fatherGiven')
+      data.motherSurname=getVal('motherSurname')
+      data.motherGiven=getVal('motherGiven')
+
+      data.apt=getVal('apt')
+      data.address=getVal('address')
+      data.postal=getVal('postal')
+
+      data.familyPhone=getVal('familyPhone')
+      data.homeLang=getVal('homeLang')
+      data.cathNo=isChecked('cathNo')
+      data.cathYes=isChecked('cathYes')
+
+      // students
+      const students=[]
+      const stuRows=document.querySelectorAll('.studentRow')
+      stuRows.forEach((r,i)=>{
+        const s={}
+        s.surname=r.querySelector('.stu-surname').value
+        s.given=r.querySelector('.stu-given').value
+        s.f=r.querySelector('.stu-f').checked
+        s.m=r.querySelector('.stu-m').checked
+        s.dob=r.querySelector('.stu-dob').value
+        s.birth=r.querySelector('.stu-birth').value
+        s.lastgrade=r.querySelector('.stu-lastgrade').value
+        s.thisyear=r.querySelector('.stu-thisyear').checked
+        s.nextyear=r.querySelector('.stu-nextyear').checked
+        s.progNo=r.querySelector('.stu-prog-no').checked
+        s.progYes=r.querySelector('.stu-prog-yes').checked
+        s.progSpec=r.querySelector('.stu-prog-spec').value
+        students.push(s)
+      })
+      data.students=students
+
+      data.limitedNo=isChecked('limitedNo')
+      data.limitedYes=isChecked('limitedYes')
+      data.notes=document.getElementById('notes').value
+      return data
     }
+
+    function renderPreview(){
+      const d=gather()
+      const tbody=document.getElementById('paperBody')
+      tbody.innerHTML=''
+
+      function row(label,left,right){
+        const tr=document.createElement('tr')
+        const td1=document.createElement('td');td1.className='field-label';td1.textContent=label
+        const td2=document.createElement('td');td2.colSpan=3;td2.textContent=left
+        tr.appendChild(td1);tr.appendChild(td2)
+        return tr
+      }
+
+      // top row
+      const top=document.createElement('tr')
+      top.innerHTML=`<td class="field-label">DATE</td><td>${d.date||''}</td><td class="field-label">TAKEN BY</td><td>${d.takenBy||''}</td>`
+      tbody.appendChild(top)
+
+      const contact=document.createElement('tr')
+      contact.innerHTML=`<td class="field-label">CONTACT NAME/SURNAME</td><td>${d.contactName||''}</td><td class="field-label">CONTACT PHONE #</td><td>${d.contactPhone||''}</td>`
+      tbody.appendChild(contact)
+
+      const rel=document.createElement('tr')
+      rel.innerHTML=`<td class="field-label">CONTACT RELATIONSHIP</td><td colspan="3">${d.contactRel||''}</td>`
+      tbody.appendChild(rel)
+
+      // immigration row
+      const imm=document.createElement('tr')
+      imm.innerHTML=`<td class="field-label">STUDENT'S STATUS</td><td>${d.studentStatus||''}</td><td class="field-label">IMMIGRATION DOC (PARENT)</td><td>${d.docPR? 'PR ' : ''}${d.docRC? 'RC ' : ''}${d.docSP? 'SP ' : ''}${d.docWP? 'WP ' : ''}</td>`
+      tbody.appendChild(imm)
+
+      const exp=document.createElement('tr')
+      exp.innerHTML=`<td class="field-label">EXPIRY DATE (RC/SP/WP)</td><td>${d.expiry||''}</td><td class="field-label">PREVIOUS ATTENDANCE IN CANADIAN SCHOOLS?</td><td>${d.prevNo? 'NO' : ''} ${d.prevYes? 'YES' : ''}</td>`
+      tbody.appendChild(exp)
+
+      const landed=document.createElement('tr')
+      landed.innerHTML=`<td class="field-label">DATE STUDENT(S) LANDED IN CANADA</td><td colspan="3">${d.landed||''}</td>`
+      tbody.appendChild(landed)
+
+      // parents
+      const parents=document.createElement('tr')
+      parents.innerHTML=`<td class="field-label">FATHER'S SURNAME</td><td>${d.fatherSurname||''}</td><td class="field-label">FATHER'S GIVEN NAME</td><td>${d.fatherGiven||''}</td>`
+      tbody.appendChild(parents)
+      const parents2=document.createElement('tr')
+      parents2.innerHTML=`<td class="field-label">MOTHER'S SURNAME</td><td>${d.motherSurname||''}</td><td class="field-label">MOTHER'S GIVEN NAME</td><td>${d.motherGiven||''}</td>`
+      tbody.appendChild(parents2)
+
+      const addr=document.createElement('tr')
+      addr.innerHTML=`<td class="field-label">APARTMENT #</td><td>${d.apt||''}</td><td class="field-label">FAMILY ADDRESS</td><td>${d.address||''} ${d.postal? ' / '+d.postal : ''}</td>`
+      tbody.appendChild(addr)
+
+      const fam=document.createElement('tr')
+      fam.innerHTML=`<td class="field-label">FAMILY PHONE #</td><td>${d.familyPhone||''}</td><td class="field-label">HOME LANGUAGE</td><td>${d.homeLang||''} ${d.cathNo? ' / Catholic: NO' : ''} ${d.cathYes? ' / Catholic: YES' : ''}</td>`
+      tbody.appendChild(fam)
+
+      // students header
+      const stuHeader=document.createElement('tr')
+      stuHeader.innerHTML=`<td class="field-label">STUDENT(S)</td><td colspan="3"></td>`
+      tbody.appendChild(stuHeader)
+
+      d.students.forEach((s,idx)=>{
+        const tr1=document.createElement('tr')
+        tr1.innerHTML=`<td class="field-label">Surname</td><td>${s.surname||''}</td><td class="field-label">Given Name</td><td>${s.given||''}</td>`
+        tbody.appendChild(tr1)
+        const tr2=document.createElement('tr')
+        const gender=(s.f? 'F ' : '')+(s.m? 'M ' : '')
+        tr2.innerHTML=`<td class="field-label">Gender / DOB</td><td>${gender} / ${s.dob||''}</td><td class="field-label">Birth Country</td><td>${s.birth||''}</td>`
+        tbody.appendChild(tr2)
+        const tr3=document.createElement('tr')
+        const sy=(s.thisyear? 'This year ' : '')+(s.nextyear? 'Next year ' : '')
+        const prog=(s.progNo? 'NO ' : '')+(s.progYes? 'YES ' : '')+(s.progSpec? ' / '+s.progSpec : '')
+        tr3.innerHTML=`<td class="field-label">Last Grade Completed</td><td>${s.lastgrade||''}</td><td class="field-label">School Year / Program</td><td>${sy} / ${prog}</td>`
+        tbody.appendChild(tr3)
+      })
+
+      const limited=document.createElement('tr')
+      limited.innerHTML=`<td class="field-label">POTENTIAL LIMITED FORMAL SCHOOLING PROFILE</td><td colspan="3">${d.limitedNo? 'NO' : ''} ${d.limitedYes? 'YES' : ''}</td>`
+      tbody.appendChild(limited)
+
+      const notes=document.createElement('tr')
+      notes.innerHTML=`<td class="field-label">NOTES</td><td colspan="3">${d.notes||''}</td>`
+      tbody.appendChild(notes)
+
+      document.getElementById('previewArea').style.display='block'
+      window.scrollTo({top:document.getElementById('previewArea').offsetTop-20,behavior:'smooth'})
+    }
+
+    document.getElementById('generateBtn').addEventListener('click',function(e){e.preventDefault();renderPreview()})
+    document.getElementById('clearBtn').addEventListener('click',function(){document.getElementById('intakeForm').reset();document.getElementById('previewArea').style.display='none'})
   </script>
 </body>
 </html>
