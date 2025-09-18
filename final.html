@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Final Yellow Sheet</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #fffbea; padding: 20px; font-family: Arial, sans-serif; }
+    .yellow-sheet {
+      border: 3px solid #f4d03f;
+      padding: 20px;
+      background: #fff;
+      max-width: 700px;
+      margin: auto;
+    }
+    h2 { text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="yellow-sheet">
+    <h2>Appointment Information</h2>
+    <p><strong>Full Name:</strong> <span id="out_fullname"></span></p>
+    <p><strong>Date of Birth:</strong> <span id="out_dob"></span></p>
+    <p><strong>Phone Number:</strong> <span id="out_phone"></span></p>
+    <p><strong>Email:</strong> <span id="out_email"></span></p>
+    <p><strong>Address:</strong> <span id="out_address"></span></p>
+    <p><strong>Appointment Date:</strong> <span id="out_appt_date"></span></p>
+    <p><strong>Preferred Time:</strong> <span id="out_appt_time"></span></p>
+    <p><strong>Reason:</strong> <span id="out_reason"></span></p>
+    <p><strong>Special Requirements:</strong> <span id="out_requirements"></span></p>
+    <p><strong>Emergency Contact:</strong> <span id="out_emergency_name"></span></p>
+    <p><strong>Emergency Phone:</strong> <span id="out_emergency_phone"></span></p>
+  </div>
+
+  <button onclick="window.print()">Save/Print</button>
+
+  <script>
+    // Pull saved data
+    const fields = [
+      "fullname", "dob", "phone", "email", "address",
+      "appt_date", "appt_time", "reason", "requirements",
+      "emergency_name", "emergency_phone"
+    ];
+    fields.forEach(id => {
+      document.getElementById("out_" + id).textContent = localStorage.getItem(id);
+    });
+  </script>
+</body>
+</html>
