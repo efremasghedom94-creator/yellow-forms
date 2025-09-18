@@ -2,197 +2,272 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Intake Form</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    .wizard { max-width: 800px; margin: auto; padding: 20px; }
-    .step { display: none; }
-    .step.active { display: block; }
-    .buttons { margin-top: 20px; text-align: center; }
-    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; }
-    .next { background: #007bff; color: white; }
-    .prev { background: #6c757d; color: white; }
-    .generate { background: #28a745; color: white; }
-    label { display: block; margin: 6px 0; }
-    input, select { margin-top: 4px; padding: 6px; width: 95%; }
-    .inline { display: inline-block; margin-right: 10px; }
-    .disabled { opacity: 0.5; pointer-events: none; }
-
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f9f9f9;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    .step {
+      display: none;
+    }
+    .step.active {
+      display: block;
+    }
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    input[type="text"], input[type="date"], select {
+      width: 100%;
+      padding: 6px;
+      margin: 4px 0 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    .student-entry {
+      border: 1px dashed #aaa;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #fff;
+    }
+    .disabled {
+      background: #eee;
+      pointer-events: none;
+    }
     /* Final yellow form */
-    #output { display: none; margin: 20px auto; max-width: 900px; background: #fffacd; padding: 20px; border: 1px solid #000; }
-    #output table { width: 100%; border-collapse: collapse; }
-    #output th, #output td { border: 1px solid #000; padding: 6px; vertical-align: top; }
-    #output .header-img { width: 100%; max-height: 120px; object-fit: contain; margin-bottom: 10px; }
-    #downloadBtn { margin: 15px 0; background: #dc3545; color: white; }
+    #finalForm {
+      display: none;
+      background: #fff8d4;
+      border: 1px solid #333;
+      padding: 10px;
+      overflow-x: auto;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 14px;
+    }
+    td, th {
+      border: 1px solid #333;
+      padding: 6px;
+      vertical-align: top;
+    }
+    .section-title {
+      background: #ffe680;
+      font-weight: bold;
+      text-align: center;
+    }
+    .checkbox {
+      font-family: monospace;
+    }
+    .download-btn {
+      margin-top: 15px;
+      padding: 8px 15px;
+      background: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .download-btn:hover {
+      background: #555;
+    }
     @media (max-width: 600px) {
-      input, select { width: 100%; }
-      .inline { display: block; margin-bottom: 10px; }
+      table, td, th {
+        font-size: 12px;
+        padding: 4px;
+      }
     }
   </style>
 </head>
 <body>
+<div class="container">
+  <h2>Student Intake Wizard</h2>
 
-<div class="wizard">
   <!-- Step 1 -->
-  <div class="step active">
-    <h3>Student Details</h3>
-    <div id="student-container"></div>
-    <button type="button" onclick="addStudent()">➕ Add Student</button>
+  <div class="step active" id="step1">
+    <h3>Step 1: Parent/Guardian Info</h3>
+    <label>Parent/Guardian Name:</label>
+    <input type="text" id="parentName">
+    <label>Phone:</label>
+    <input type="text" id="parentPhone">
+    <label>Email:</label>
+    <input type="text" id="parentEmail">
+    <div class="buttons">
+      <button onclick="nextStep(2)">Next</button>
+    </div>
   </div>
 
   <!-- Step 2 -->
-  <div class="step">
-    <h3>School History</h3>
-    <label>Previous attendance in Canadian schools?</label>
-    <label class="inline"><input type="radio" name="prevAttendance" value="Yes" onchange="togglePrevAttendance()"> Yes</label>
-    <label class="inline"><input type="radio" name="prevAttendance" value="No" onchange="togglePrevAttendance()"> No</label>
-
-    <div id="prevDetails">
-      <label>Where: <input type="text" id="prevWhere"></label>
-      <label>Grade: <input type="text" id="prevGrade"></label>
-      <label>For how long: <input type="text" id="prevHowLong"></label>
+  <div class="step" id="step2">
+    <h3>Step 2: Student Info</h3>
+    <div id="students"></div>
+    <button onclick="addStudent()">Add Student</button>
+    <div class="buttons">
+      <button onclick="prevStep(1)">Back</button>
+      <button onclick="nextStep(3)">Next</button>
     </div>
   </div>
 
   <!-- Step 3 -->
-  <div class="step">
-    <h3>Immigration Information</h3>
-    <label>Immigration Document (of Natural Parent/Guardian)</label>
-    <label><input type="checkbox" class="imm-doc" value="PR Card"> PR Card</label>
-    <label><input type="checkbox" class="imm-doc" value="Work Permit"> Work Permit</label>
-    <label><input type="checkbox" class="imm-doc" value="Study Permit"> Study Permit</label>
-    <label><input type="checkbox" class="imm-doc" value="Other" onchange="toggleOther('imm')"> Other <input id="immOther" disabled></label>
-
-    <label>Student's Status</label>
-    <label><input type="checkbox" class="stu-status" value="Citizen"> Citizen</label>
-    <label><input type="checkbox" class="stu-status" value="PR"> PR</label>
-    <label><input type="checkbox" class="stu-status" value="Refugee"> Refugee</label>
-    <label><input type="checkbox" class="stu-status" value="Other" onchange="toggleOther('stu')"> Other <input id="stuOther" disabled></label>
+  <div class="step" id="step3">
+    <h3>Step 3: Immigration & Status</h3>
+    <label>Immigration Document (Parent/Guardian):</label>
+    <div>
+      <label><input type="checkbox" name="doc" value="PR Card"> PR Card</label>
+      <label><input type="checkbox" name="doc" value="Work Permit"> Work Permit</label>
+      <label><input type="checkbox" name="doc" value="Study Permit"> Study Permit</label>
+      <label><input type="checkbox" name="doc" value="Other" onchange="toggleOther('doc')"> Other</label>
+      <input type="text" id="docOther" style="display:none;" placeholder="Specify">
+    </div>
+    <label>Student's Status:</label>
+    <div>
+      <label><input type="checkbox" name="status" value="Citizen"> Citizen</label>
+      <label><input type="checkbox" name="status" value="Permanent Resident"> Permanent Resident</label>
+      <label><input type="checkbox" name="status" value="Refugee"> Refugee</label>
+      <label><input type="checkbox" name="status" value="Other" onchange="toggleOther('status')"> Other</label>
+      <input type="text" id="statusOther" style="display:none;" placeholder="Specify">
+    </div>
+    <div class="buttons">
+      <button onclick="prevStep(2)">Back</button>
+      <button onclick="generateForm()">Generate Form</button>
+    </div>
   </div>
 
-  <div class="buttons">
-    <button type="button" class="prev" onclick="nextPrev(-1)">Back</button>
-    <button type="button" class="next" onclick="nextPrev(1)">Next</button>
-    <button type="button" class="generate" onclick="generateOutput()">Generate Form</button>
+  <!-- Final yellow form -->
+  <div id="finalForm">
+    <h3>Generated Yellow Form</h3>
+    <div id="outputTable"></div>
+    <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
   </div>
 </div>
 
-<!-- Final Yellow Form -->
-<div id="output">
-  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABCoAAACGCAYAAAAbxGtMAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAP+lSURBVHhe7P3nn1zXeeeLftdae1euzjkAjW6gkVMDIAEwZ1KJkpVMBctje3zvOX..." class="header-img" alt="Header">
-
-  <table id="finalTable">
-    <!-- Filled dynamically -->
-  </table>
-  <button id="downloadBtn" onclick="downloadPDF()">Download PDF</button>
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-let currentStep = 0;
-showStep(currentStep);
-
-function showStep(n) {
-  const steps = document.getElementsByClassName("step");
-  for (let i=0; i<steps.length; i++) steps[i].classList.remove("active");
-  steps[n].classList.add("active");
-
-  document.querySelector(".prev").style.display = n===0 ? "none" : "inline-block";
-  document.querySelector(".next").style.display = n===steps.length-1 ? "none" : "inline-block";
-  document.querySelector(".generate").style.display = n===steps.length-1 ? "inline-block" : "none";
-}
-
-function nextPrev(n) {
-  const steps = document.getElementsByClassName("step");
-  currentStep += n;
-  if (currentStep >= steps.length) currentStep = steps.length-1;
-  if (currentStep < 0) currentStep = 0;
-  showStep(currentStep);
-}
-
-function addStudent() {
-  const container = document.getElementById("student-container");
-  const index = container.children.length + 1;
-  const div = document.createElement("div");
-  div.innerHTML = `
-    <h4>Student ${index}</h4>
-    <label>First Name: <input type="text" class="firstName"></label>
-    <label>Last Name: <input type="text" class="lastName"></label>
-    <label>Date of Birth: <input type="date" class="dob"></label>
-    <label>Grade: <input type="text" class="grade"></label>
-  `;
-  container.appendChild(div);
-}
-
-function togglePrevAttendance() {
-  const yes = document.querySelector('input[name="prevAttendance"][value="Yes"]').checked;
-  document.getElementById("prevDetails").className = yes ? "" : "disabled";
-}
-
-function toggleOther(type) {
-  if (type === 'imm') {
-    const otherBox = document.querySelector('input[value="Other"].imm-doc');
-    document.getElementById("immOther").disabled = !otherBox.checked;
-  } else {
-    const otherBox = document.querySelector('input[value="Other"].stu-status');
-    document.getElementById("stuOther").disabled = !otherBox.checked;
+  let currentStep = 1;
+  function nextStep(step) {
+    document.getElementById("step" + currentStep).classList.remove("active");
+    currentStep = step;
+    document.getElementById("step" + step).classList.add("active");
   }
-}
+  function prevStep(step) {
+    document.getElementById("step" + currentStep).classList.remove("active");
+    currentStep = step;
+    document.getElementById("step" + step).classList.add("active");
+  }
 
-function generateOutput() {
-  const students = [...document.querySelectorAll("#student-container > div")].map(s => ({
-    first: s.querySelector(".firstName").value,
-    last: s.querySelector(".lastName").value,
-    dob: s.querySelector(".dob").value,
-    grade: s.querySelector(".grade").value
-  }));
-
-  const prevAttendance = document.querySelector('input[name="prevAttendance"]:checked')?.value || "";
-  const prevWhere = document.getElementById("prevWhere").value;
-  const prevGrade = document.getElementById("prevGrade").value;
-  const prevHowLong = document.getElementById("prevHowLong").value;
-
-  const immDocs = [...document.querySelectorAll(".imm-doc:checked")].map(c => c.value);
-  if (immDocs.includes("Other")) immDocs[immDocs.indexOf("Other")] = "Other: " + document.getElementById("immOther").value;
-
-  const stuStatus = [...document.querySelectorAll(".stu-status:checked")].map(c => c.value);
-  if (stuStatus.includes("Other")) stuStatus[stuStatus.indexOf("Other")] = "Other: " + document.getElementById("stuOther").value;
-
-  let html = `
-    <tr><th colspan="4">STUDENT INTAKE FORM</th></tr>
-    <tr><td colspan="4"><b>STUDENT DETAILS</b></td></tr>
-  `;
-  students.forEach((s,i) => {
-    html += `
-      <tr><td>Student ${i+1} First Name</td><td>${s.first}</td><td>Last Name</td><td>${s.last}</td></tr>
-      <tr><td>DOB</td><td>${s.dob}</td><td>Grade</td><td>${s.grade}</td></tr>
+  function addStudent() {
+    const container = document.getElementById("students");
+    const div = document.createElement("div");
+    div.className = "student-entry";
+    div.innerHTML = `
+      <label>Student Name:</label><input type="text" class="studentName">
+      <label>DOB:</label><input type="date" class="studentDOB">
+      <label>Grade:</label><input type="text" class="studentGrade">
+      <label>Previous Attendance in Canadian Schools?</label>
+      <select class="studentPrev" onchange="togglePrev(this)">
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+      </select>
+      <div class="prevDetails disabled">
+        <label>Where/Grade/How long:</label>
+        <input type="text" class="studentPrevDetails">
+      </div>
     `;
-  });
-  html += `
-    <tr><td colspan="4"><b>SCHOOL HISTORY</b></td></tr>
-    <tr><td>Prev Attendance</td><td>${prevAttendance}</td><td>Where</td><td>${prevWhere}</td></tr>
-    <tr><td>Grade</td><td>${prevGrade}</td><td>How Long</td><td>${prevHowLong}</td></tr>
-    <tr><td colspan="4"><b>IMMIGRATION</b></td></tr>
-    <tr><td colspan="2">Immigration Docs</td><td colspan="2">${immDocs.join(", ")}</td></tr>
-    <tr><td colspan="2">Student Status</td><td colspan="2">${stuStatus.join(", ")}</td></tr>
-  `;
-  document.getElementById("finalTable").innerHTML = html;
-  document.querySelector(".wizard").style.display = "none";
-  document.getElementById("output").style.display = "block";
-}
+    container.appendChild(div);
+  }
 
-function downloadPDF() {
-  const element = document.getElementById("output");
-  html2pdf().from(element).set({
-    margin: 0.2,
-    filename: "intake_form.pdf",
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
-  }).save();
-}
+  function togglePrev(select) {
+    const details = select.parentElement.querySelector(".prevDetails");
+    if (select.value === "Yes") {
+      details.classList.remove("disabled");
+    } else {
+      details.classList.add("disabled");
+      details.querySelector("input").value = "";
+    }
+  }
 
-// Initialize with one student
-addStudent();
+  function toggleOther(type) {
+    const input = document.getElementById(type + "Other");
+    input.style.display = input.style.display === "none" ? "block" : "none";
+  }
+
+  function generateForm() {
+    document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+    document.getElementById("finalForm").style.display = "block";
+
+    const parentName = document.getElementById("parentName").value;
+    const parentPhone = document.getElementById("parentPhone").value;
+    const parentEmail = document.getElementById("parentEmail").value;
+
+    let studentsHTML = "";
+    document.querySelectorAll(".student-entry").forEach(stu => {
+      const name = stu.querySelector(".studentName").value;
+      const dob = stu.querySelector(".studentDOB").value;
+      const grade = stu.querySelector(".studentGrade").value;
+      const prev = stu.querySelector(".studentPrev").value;
+      const prevDetails = stu.querySelector(".studentPrevDetails").value;
+      studentsHTML += `
+        <tr>
+          <td>${name}</td>
+          <td>${dob}</td>
+          <td>${grade}</td>
+          <td>${prev} ${prev === "Yes" ? prevDetails : ""}</td>
+        </tr>
+      `;
+    });
+
+    let docValues = [...document.querySelectorAll('input[name="doc"]:checked')].map(cb => cb.value);
+    if (docValues.includes("Other")) {
+      docValues[docValues.indexOf("Other")] = "Other: " + document.getElementById("docOther").value;
+    }
+    let statusValues = [...document.querySelectorAll('input[name="status"]:checked')].map(cb => cb.value);
+    if (statusValues.includes("Other")) {
+      statusValues[statusValues.indexOf("Other")] = "Other: " + document.getElementById("statusOther").value;
+    }
+
+    document.getElementById("outputTable").innerHTML = `
+      <table>
+        <tr><th colspan="4" class="section-title">PARENT/GUARDIAN INFO</th></tr>
+        <tr><td>Name</td><td colspan="3">${parentName}</td></tr>
+        <tr><td>Phone</td><td>${parentPhone}</td><td>Email</td><td>${parentEmail}</td></tr>
+
+        <tr><th colspan="4" class="section-title">STUDENT INFO</th></tr>
+        <tr><td>Name</td><td>DOB</td><td>Grade</td><td>Previous Attendance</td></tr>
+        ${studentsHTML}
+
+        <tr><th colspan="4" class="section-title">IMMIGRATION & STATUS</th></tr>
+        <tr><td colspan="2">Immigration Document:</td><td colspan="2">${docValues.join(", ")}</td></tr>
+        <tr><td colspan="2">Student Status:</td><td colspan="2">${statusValues.join(", ")}</td></tr>
+      </table>
+    `;
+  }
+
+  function downloadPDF() {
+    const element = document.getElementById("outputTable");
+    const opt = {
+      margin: 0.5,
+      filename: "yellow_form.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
 </script>
 </body>
 </html>
