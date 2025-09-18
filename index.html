@@ -1,230 +1,313 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>One World One Centre — Intake Wizard & Yellow Form</title>
+  <meta charset="UTF-8">
+  <title>Student Booking Form Wizard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- html2pdf for one-click PDF export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-  <style>
-    /* Small helpers */
-    .field-gap{gap:12px}
-    .disabled-input{background:#f3f4f6;color:#6b7280}
-    
-    /* Final yellow sheet styling */
-    .yellow-bg {
-      background-color: #FFF9C4;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .checkbox-box {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 1px solid #111;
-      text-align: center;
-      line-height: 18px;
-      font-weight: 700;
-      margin-right: 6px;
-    }
-    
-    .muted {
-      color: #6b7280;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    td {
-      padding: 8px;
-      border: 1px solid #ddd;
-      vertical-align: top;
-    }
-
-    .header {
-      background-color: #f0f0f0;
-      font-weight: bold;
-      width: 40%;
-    }
-
-    .content {
-      width: 60%;
-    }
-
-    .final-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-
-    @media print {
-      body { margin: 0; }
-      .wizard { display: none; }
-      .final-wrap { display: block; }
-    }
-  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-  <div class="max-w-5xl mx-auto p-6">
-    <!-- FINAL STATIC YELLOW FORM -->
-    <div id="finalWrap" class="final-wrap hidden mt-6">
-      <div id="finalArea" class="yellow-bg p-6 rounded shadow border">
-        <!-- Content injected here -->
-        <table>
-          <tr>
-            <td class="header">DATE</td>
-            <td class="content" id="finalDate"></td>
-          </tr>
-          <tr>
-            <td class="header">TAKEN BY</td>
-            <td class="content" id="finalTakenBy"></td>
-          </tr>
-          <tr>
-            <td class="header">CONTACT NAME / SURNAME</td>
-            <td class="content" id="finalContactName"></td>
-          </tr>
-          <tr>
-            <td class="header">CONTACT PHONE #</td>
-            <td class="content" id="finalContactPhone"></td>
-          </tr>
-          <tr>
-            <td class="header">CONTACT RELATION</td>
-            <td class="content" id="finalContactRel"></td>
-          </tr>
-          <tr>
-            <td class="header">STUDENT'S STATUS</td>
-            <td class="content" id="finalStudentStatus"></td>
-          </tr>
-          <tr>
-            <td class="header">IMMIGRATION DOCUMENT</td>
-            <td class="content" id="finalImmDoc"></td>
-          </tr>
-          <tr>
-            <td class="header">EXPIRY DATE (RC/SP/WP)</td>
-            <td class="content" id="finalExpiryDate"></td>
-          </tr>
-          <tr>
-            <td class="header">PREVIOUS ATTENDANCE IN CANADIAN SCHOOLS?</td>
-            <td class="content" id="finalPrevAttend"></td>
-          </tr>
-          <tr>
-            <td class="header">DATE STUDENT(S) LANDED IN CANADA</td>
-            <td class="content" id="finalLanded"></td>
-          </tr>
-          <tr>
-            <td class="header">FATHER'S SURNAME</td>
-            <td class="content" id="finalFatherSurname"></td>
-          </tr>
-          <tr>
-            <td class="header">FATHER'S GIVEN NAME</td>
-            <td class="content" id="finalFatherGiven"></td>
-          </tr>
-          <tr>
-            <td class="header">MOTHER'S SURNAME</td>
-            <td class="content" id="finalMotherSurname"></td>
-          </tr>
-          <tr>
-            <td class="header">MOTHER'S GIVEN NAME</td>
-            <td class="content" id="finalMotherGiven"></td>
-          </tr>
-          <tr>
-            <td class="header">FAMILY ADDRESS</td>
-            <td class="content" id="finalAddress"></td>
-          </tr>
-          <tr>
-            <td class="header">POSTAL CODE</td>
-            <td class="content" id="finalPostalCode"></td>
-          </tr>
-          <tr>
-            <td class="header">FAMILY PHONE #</td>
-            <td class="content" id="finalFamilyPhone"></td>
-          </tr>
-          <tr>
-            <td class="header">HOME LANGUAGE</td>
-            <td class="content" id="finalHomeLang"></td>
-          </tr>
-          <tr>
-            <td class="header">CATHOLIC</td>
-            <td class="content" id="finalCatholic"></td>
-          </tr>
-          <tr>
-            <td class="header">STUDENT(S)</td>
-            <td class="content" id="finalStudents"></td>
-          </tr>
-        </table>
+<body class="bg-gray-100">
 
-        <div class="final-buttons">
-          <button id="printBtn" class="px-4 py-2 bg-blue-600 text-white rounded" onclick="window.print()">Print</button>
-          <button id="pdfBtn" class="px-4 py-2 bg-indigo-600 text-white rounded">Download PDF</button>
-          <button id="editBtn" class="px-4 py-2 bg-gray-500 text-white rounded">Back to Edit</button>
-        </div>
+  <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-6 mt-8">
+    <div id="wizard">
+      <!-- Step Pages -->
+      <div id="step1" class="step">
+        <h2 class="font-bold text-lg mb-2">Step 1: Contact Information</h2>
+        <label class="block mb-2">Date: <input type="date" id="date" class="border p-1 w-full"></label>
+        <label class="block mb-2">Taken By: <input type="text" id="takenBy" class="border p-1 w-full"></label>
+        <label class="block mb-2">Contact Name/Surname: <input type="text" id="contactName" class="border p-1 w-full"></label>
+        <label class="block mb-2">Contact Phone #: <input type="text" id="contactPhone" class="border p-1 w-full"></label>
+        <label class="block mb-2">Contact Relationship: <input type="text" id="contactRelation" class="border p-1 w-full"></label>
+        <button onclick="nextStep()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">Next</button>
+      </div>
+
+      <div id="step2" class="step hidden">
+        <h2 class="font-bold text-lg mb-2">Step 2: Immigration & Status</h2>
+        <label class="block mb-2">Immigration Document: <input type="text" id="immigrationDoc" class="border p-1 w-full"></label>
+        <label class="block mb-2">Expiry Date: <input type="date" id="expiryDate" class="border p-1 w-full"></label>
+        <label class="block mb-2">Previous Attendance in Canadian Schools:
+          <select id="prevSchool" class="border p-1 w-full">
+            <option value="">Select</option>
+            <option>No</option>
+            <option>Yes</option>
+          </select>
+        </label>
+        <label class="block mb-2">Date Student(s) Landed in Canada: <input type="date" id="landedDate" class="border p-1 w-full"></label>
+        <button onclick="prevStep()" class="mt-4 px-4 py-2 bg-gray-400 text-white rounded">Back</button>
+        <button onclick="nextStep()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">Next</button>
+      </div>
+
+      <div id="step3" class="step hidden">
+        <h2 class="font-bold text-lg mb-2">Step 3: Parent Information</h2>
+        <label class="block mb-2">Father's Surname: <input type="text" id="fatherSurname" class="border p-1 w-full"></label>
+        <label class="block mb-2">Father's Given Name: <input type="text" id="fatherGiven" class="border p-1 w-full"></label>
+        <label class="block mb-2">Mother's Surname: <input type="text" id="motherSurname" class="border p-1 w-full"></label>
+        <label class="block mb-2">Mother's Given Name: <input type="text" id="motherGiven" class="border p-1 w-full"></label>
+        <button onclick="prevStep()" class="mt-4 px-4 py-2 bg-gray-400 text-white rounded">Back</button>
+        <button onclick="nextStep()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">Next</button>
+      </div>
+
+      <div id="step4" class="step hidden">
+        <h2 class="font-bold text-lg mb-2">Step 4: Address</h2>
+        <label class="block mb-2">Apartment #: <input type="text" id="apartment" class="border p-1 w-full"></label>
+        <label class="block mb-2">Family Address: <input type="text" id="address" class="border p-1 w-full"></label>
+        <label class="block mb-2">Postal Code: <input type="text" id="postalCode" class="border p-1 w-full"></label>
+        <label class="block mb-2">Family Phone #: <input type="text" id="familyPhone" class="border p-1 w-full"></label>
+        <label class="block mb-2">Home Language: <input type="text" id="language" class="border p-1 w-full"></label>
+        <label class="block mb-2">Catholic:
+          <select id="catholic" class="border p-1 w-full">
+            <option value="">Select</option>
+            <option>No</option>
+            <option>Yes</option>
+          </select>
+        </label>
+        <button onclick="prevStep()" class="mt-4 px-4 py-2 bg-gray-400 text-white rounded">Back</button>
+        <button onclick="nextStep()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">Next</button>
+      </div>
+
+      <div id="step5" class="step hidden">
+        <h2 class="font-bold text-lg mb-2">Step 5: Students</h2>
+        <div id="studentsContainer"></div>
+        <button onclick="addStudent()" class="px-3 py-1 bg-green-600 text-white rounded">+ Add Student</button>
+        <br>
+        <button onclick="prevStep()" class="mt-4 px-4 py-2 bg-gray-400 text-white rounded">Back</button>
+        <button onclick="nextStep()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">Next</button>
+      </div>
+
+      <div id="step6" class="step hidden">
+        <h2 class="font-bold text-lg mb-2">Step 6: Additional Info</h2>
+        <label class="block mb-2">Potential Limited Formal Schooling Profile:
+          <select id="lfsp" class="border p-1 w-full">
+            <option value="">Select</option>
+            <option>No</option>
+            <option>Yes</option>
+          </select>
+        </label>
+        <label class="block mb-2">Notes: <textarea id="notes" class="border p-1 w-full"></textarea></label>
+        <button onclick="prevStep()" class="mt-4 px-4 py-2 bg-gray-400 text-white rounded">Back</button>
+        <button onclick="finishWizard()" class="mt-4 px-4 py-2 bg-green-600 text-white rounded">Finish</button>
       </div>
     </div>
+
+    <!-- Final Yellow Page -->
+    <div id="finalPage" class="hidden mt-6"></div>
   </div>
 
   <script>
-    // Function to fill the form with data from the wizard
-    function generateFinal() {
-      // Fill final table content
-      document.getElementById("finalDate").innerText = document.getElementById("date").value;
-      document.getElementById("finalTakenBy").innerText = document.getElementById("takenBy").value;
-      document.getElementById("finalContactName").innerText = document.getElementById("contactName").value;
-      document.getElementById("finalContactPhone").innerText = document.getElementById("contactPhone").value;
-      document.getElementById("finalContactRel").innerText = document.getElementById("contactRel").value;
-      document.getElementById("finalStudentStatus").innerText = getRadioValue('studentStatus');
-      document.getElementById("finalImmDoc").innerText = getRadioValue('immDoc');
-      document.getElementById("finalExpiryDate").innerText = document.getElementById("expiry").value;
-      document.getElementById("finalPrevAttend").innerText = getRadioValue('prevAttend');
-      document.getElementById("finalLanded").innerText = document.getElementById("landed").value;
-      document.getElementById("finalFatherSurname").innerText = document.getElementById("fatherSurname").value;
-      document.getElementById("finalFatherGiven").innerText = document.getElementById("fatherGiven").value;
-      document.getElementById("finalMotherSurname").innerText = document.getElementById("motherSurname").value;
-      document.getElementById("finalMotherGiven").innerText = document.getElementById("motherGiven").value;
-      document.getElementById("finalAddress").innerText = document.getElementById("address").value;
-      document.getElementById("finalPostalCode").innerText = document.getElementById("postal").value;
-      document.getElementById("finalFamilyPhone").innerText = document.getElementById("familyPhone").value;
-      document.getElementById("finalHomeLang").innerText = document.getElementById("homeLang").value;
-      document.getElementById("finalCatholic").innerText = getRadioValue('catholic');
+    let currentStep = 1;
+    let formData = { students: [] };
 
-      // Students section (if any students exist)
-      let studentsHtml = "";
-      for (let i = 1; i <= studentCount; i++) {
-        const surname = document.getElementById(`s_${i}_surname`).value || '';
-        const given = document.getElementById(`s_${i}_given`).value || '';
-        studentsHtml += `<strong>STUDENT ${i}:</strong> ${surname}, ${given}<br>`;
+    function showStep(step) {
+      document.querySelectorAll(".step").forEach(el => el.classList.add("hidden"));
+      document.getElementById("step" + step).classList.remove("hidden");
+    }
+
+    function nextStep() {
+      saveStepData(currentStep);
+      currentStep++;
+      showStep(currentStep);
+    }
+
+    function prevStep() {
+      currentStep--;
+      showStep(currentStep);
+    }
+
+    function saveStepData(step) {
+      if (step === 1) {
+        formData.date = document.getElementById("date").value;
+        formData.takenBy = document.getElementById("takenBy").value;
+        formData.contactName = document.getElementById("contactName").value;
+        formData.contactPhone = document.getElementById("contactPhone").value;
+        formData.contactRelation = document.getElementById("contactRelation").value;
+      } else if (step === 2) {
+        formData.immigrationDoc = document.getElementById("immigrationDoc").value;
+        formData.expiryDate = document.getElementById("expiryDate").value;
+        formData.prevSchool = document.getElementById("prevSchool").value;
+        formData.landedDate = document.getElementById("landedDate").value;
+      } else if (step === 3) {
+        formData.fatherSurname = document.getElementById("fatherSurname").value;
+        formData.fatherGiven = document.getElementById("fatherGiven").value;
+        formData.motherSurname = document.getElementById("motherSurname").value;
+        formData.motherGiven = document.getElementById("motherGiven").value;
+      } else if (step === 4) {
+        formData.apartment = document.getElementById("apartment").value;
+        formData.address = document.getElementById("address").value;
+        formData.postalCode = document.getElementById("postalCode").value;
+        formData.familyPhone = document.getElementById("familyPhone").value;
+        formData.language = document.getElementById("language").value;
+        formData.catholic = document.getElementById("catholic").value;
+      } else if (step === 5) {
+        formData.students = [];
+        document.querySelectorAll(".student").forEach(el => {
+          let student = {
+            surname: el.querySelector(".surname").value,
+            given: el.querySelector(".given").value,
+            gender: el.querySelector(".gender").value,
+            dob: el.querySelector(".dob").value,
+            birthCountry: el.querySelector(".birthCountry").value,
+            grade: el.querySelector(".grade").value,
+            schoolYear: el.querySelector(".schoolYear").value,
+            program: el.querySelector(".program").value,
+            programSpecify: el.querySelector(".programSpecify").value
+          };
+          formData.students.push(student);
+        });
+      } else if (step === 6) {
+        formData.lfsp = document.getElementById("lfsp").value;
+        formData.notes = document.getElementById("notes").value;
       }
-      document.getElementById("finalStudents").innerHTML = studentsHtml;
-
-      // Hide wizard and show final form
-      document.getElementById('wizardRoot').classList.add('hidden');
-      document.getElementById('finalWrap').classList.remove('hidden');
     }
 
-    // Get radio button value
-    function getRadioValue(name) {
-      const r = document.querySelector(`input[name='${name}']:checked`);
-      return r ? r.value : '';
+    function addStudent() {
+      const container = document.getElementById("studentsContainer");
+      const div = document.createElement("div");
+      div.classList.add("student", "border", "p-2", "mb-2");
+      div.innerHTML = `
+        <label>Surname: <input type="text" class="surname border p-1 w-full"></label>
+        <label>Given Name: <input type="text" class="given border p-1 w-full"></label>
+        <label>Gender:
+          <select class="gender border p-1 w-full">
+            <option value="">Select</option>
+            <option>F</option>
+            <option>M</option>
+          </select>
+        </label>
+        <label>DOB: <input type="date" class="dob border p-1 w-full"></label>
+        <label>Birth Country: <input type="text" class="birthCountry border p-1 w-full"></label>
+        <label>Last Grade Completed: <input type="text" class="grade border p-1 w-full"></label>
+        <label>School Year:
+          <select class="schoolYear border p-1 w-full">
+            <option value="">Select</option>
+            <option>This Year</option>
+            <option>Next Year</option>
+          </select>
+        </label>
+        <label>Program:
+          <select class="program border p-1 w-full">
+            <option value="">Select</option>
+            <option>No</option>
+            <option>Yes</option>
+          </select>
+        </label>
+        <label>Program Specify: <input type="text" class="programSpecify border p-1 w-full"></label>
+      `;
+      container.appendChild(div);
     }
 
-    // PDF button logic
-    document.getElementById('pdfBtn').onclick = () => {
-      const opt = { margin: 0.2, filename: 'one-world-one-centre-intake.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }
-      html2pdf().set(opt).from(document.getElementById('finalArea')).save();
+    function finishWizard() {
+      saveStepData(currentStep);
+      document.getElementById("wizard").classList.add("hidden");
+      document.getElementById("finalPage").classList.remove("hidden");
+      generateFinal();
     }
 
-    // Edit button logic
-    document.getElementById('editBtn').onclick = () => {
-      document.getElementById('wizardRoot').classList.remove('hidden');
-      document.getElementById('finalWrap').classList.add('hidden');
+    function renderCheckbox(value, option) {
+      return value === option ? "☑" : "☐";
     }
+
+    function generateFinal() {
+      const finalContainer = document.getElementById("finalPage");
+      finalContainer.innerHTML = `
+        <div class="p-6 bg-yellow-100 border-2 border-gray-700">
+          <h2 class="text-center font-bold text-lg mb-4">INFORMATION NEEDED FOR BOOKING APPOINTMENTS</h2>
+          
+          <table class="w-full border-collapse border border-black text-sm">
+            <tr>
+              <td class="border p-2">DATE: ${formData.date || ""}</td>
+              <td class="border p-2">TAKEN BY: ${formData.takenBy || ""}</td>
+              <td class="border p-2">CONTACT NAME/SURNAME: ${formData.contactName || ""}</td>
+              <td class="border p-2">CONTACT PHONE #: ${formData.contactPhone || ""}</td>
+              <td class="border p-2">CONTACT RELATIONSHIP: ${formData.contactRelation || ""}</td>
+            </tr>
+
+            <tr>
+              <td class="border p-2" colspan="2">
+                STUDENT'S STATUS<br>
+                Immigration Doc: ${formData.immigrationDoc || ""}<br>
+                Expiry Date: ${formData.expiryDate || ""}
+              </td>
+              <td class="border p-2">
+                Previous Attendance in Canadian Schools:<br>
+                ${renderCheckbox(formData.prevSchool, "No")} NO 
+                ${renderCheckbox(formData.prevSchool, "Yes")} YES
+              </td>
+              <td class="border p-2">
+                Date Student(s) Landed in Canada: ${formData.landedDate || ""}
+              </td>
+            </tr>
+
+            <tr>
+              <td class="border p-2">FATHER'S SURNAME: ${formData.fatherSurname || ""}</td>
+              <td class="border p-2">FATHER'S GIVEN NAME: ${formData.fatherGiven || ""}</td>
+              <td class="border p-2">MOTHER'S SURNAME: ${formData.motherSurname || ""}</td>
+              <td class="border p-2">MOTHER'S GIVEN NAME: ${formData.motherGiven || ""}</td>
+            </tr>
+
+            <tr>
+              <td class="border p-2">APARTMENT #: ${formData.apartment || ""}</td>
+              <td class="border p-2">FAMILY ADDRESS: ${formData.address || ""}</td>
+              <td class="border p-2">POSTAL CODE: ${formData.postalCode || ""}</td>
+            </tr>
+
+            <tr>
+              <td class="border p-2">FAMILY PHONE #: ${formData.familyPhone || ""}</td>
+              <td class="border p-2">HOME LANGUAGE: ${formData.language || ""}</td>
+              <td class="border p-2">
+                CATHOLIC:<br>
+                ${renderCheckbox(formData.catholic, "No")} NO 
+                ${renderCheckbox(formData.catholic, "Yes")} YES
+              </td>
+            </tr>
+
+            ${formData.students.map((student, i) => `
+              <tr>
+                <td class="border p-2">STUDENT ${i+1} SURNAME: ${student.surname || ""}</td>
+                <td class="border p-2">GIVEN NAME: ${student.given || ""}</td>
+                <td class="border p-2">
+                  GENDER:<br>
+                  ${renderCheckbox(student.gender, "F")} F 
+                  ${renderCheckbox(student.gender, "M")} M
+                </td>
+                <td class="border p-2">DOB: ${student.dob || ""}</td>
+                <td class="border p-2">BIRTH COUNTRY: ${student.birthCountry || ""}</td>
+              </tr>
+              <tr>
+                <td class="border p-2" colspan="2">LAST GRADE COMPLETED: ${student.grade || ""}</td>
+                <td class="border p-2">
+                  SCHOOL YEAR:<br>
+                  ${renderCheckbox(student.schoolYear, "This Year")} THIS YEAR 
+                  ${renderCheckbox(student.schoolYear, "Next Year")} NEXT YEAR
+                </td>
+                <td class="border p-2" colspan="2">
+                  PROGRAM:<br>
+                  ${renderCheckbox(student.program, "No")} NO 
+                  ${renderCheckbox(student.program, "Yes")} YES
+                  ${student.programSpecify ? " Specify: " + student.programSpecify : ""}
+                </td>
+              </tr>
+            `).join("")}
+
+            <tr>
+              <td class="border p-2" colspan="5">
+                POTENTIAL LIMITED FORMAL SCHOOLING PROFILE:<br>
+                ${renderCheckbox(formData.lfsp, "No")} NO 
+                ${renderCheckbox(formData.lfsp, "Yes")} YES
+              </td>
+            </tr>
+
+            <tr>
+              <td class="border p-2" colspan="5">NOTES: ${formData.notes || ""}</td>
+            </tr>
+          </table>
+
+          <p class="mt-4 text-xs">Rev. 2021</p>
+        </div>
+      `;
+    }
+
+    // Initialize
+    showStep(1);
   </script>
+
 </body>
 </html>
